@@ -10,5 +10,5 @@ func (c *Controller) StartFirstLevel(ctx context.Context, telectx telebot.Contex
 	// начинаем первый уровень - выставляем номер уровня и вопроса
 	c.questionSrv.StartFirstLvl(telectx.Chat().ID)
 
-	return c.question(telectx)
+	return c.sendCurrentQuestion(telectx)
 }

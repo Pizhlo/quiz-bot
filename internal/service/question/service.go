@@ -42,6 +42,15 @@ func (s *Question) CurrentQuestion(userID int64) (*model.Question, error) {
 	}
 }
 
+func (s *Question) CurrentLevel(userID int64) (int, error) {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return state.level, nil
+}
+
 func (s *Question) Message(userID int64) (string, error) {
 	state, err := s.stateByUser(userID)
 	if err != nil {
@@ -52,20 +61,14 @@ func (s *Question) Message(userID int64) (string, error) {
 
 	switch state.level {
 	case firstLevel:
-		maxIdx := len(s.firstLevel)
-
 		question := s.firstLevel[state.question]
-		return question.QuestionText(curIdx, maxIdx), nil
+		return question.QuestionText(curIdx, state.maxQuestions), nil
 	case secondLevel:
-		maxIdx := len(s.secondLevel)
-
 		question := s.secondLevel[state.question]
-		return question.QuestionText(curIdx, maxIdx), nil
+		return question.QuestionText(curIdx, state.maxQuestions), nil
 	case thirdLevel:
-		maxIdx := len(s.thirdLevel)
-
 		question := s.thirdLevel[state.question]
-		return question.QuestionText(curIdx, maxIdx), nil
+		return question.QuestionText(curIdx, state.maxQuestions), nil
 	default:
 		return "", fmt.Errorf("unknown level: %+v", state.level)
 	}
@@ -98,7 +101,7 @@ func (s *Question) SetNext(userID int64) error {
 		return err
 	}
 
-	if state.lastQuestion() {
+	if state.isQuestionLast() {
 		state.level++
 		state.question = 0
 	} else {
@@ -108,4 +111,13 @@ func (s *Question) SetNext(userID int64) error {
 	s.saveState(userID, state)
 
 	return nil
+}
+
+func (s *Question) IsQuestionLast(userID int64) (bool, error) {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return false, err
+	}
+
+	return state.isQuestionLast(), nil
 }

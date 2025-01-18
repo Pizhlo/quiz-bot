@@ -14,8 +14,8 @@ type userState struct {
 	maxQuestions int
 }
 
-// lastQuestion возвращает true, если текущий вопрос - последний в раунде
-func (s *userState) lastQuestion() bool {
+// isQuestionLast возвращает true, если текущий вопрос - последний в раунде
+func (s *userState) isQuestionLast() bool {
 	return s.question == s.maxQuestions-1
 }
 

@@ -21,7 +21,7 @@ func (s *Server) commandHandlers() {
 
 func (s *Server) buttonHandlers(ctx context.Context) {
 	s.bot.Handle(&view.BtnStartQuiz, func(ctx telebot.Context) error {
-		return ctx.EditOrSend(message.FirstMessage, view.StartFirstLevel())
+		return ctx.EditOrSend(message.FirstLvlMessage, view.StartFirstLevel())
 	})
 
 	s.bot.Handle(&view.BtnStartFirstLevel, func(telectx telebot.Context) error {

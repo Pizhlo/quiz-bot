@@ -6,7 +6,7 @@ import (
 	"gopkg.in/telebot.v3"
 )
 
-func (c *Controller) question(telectx telebot.Context) error {
+func (c *Controller) sendCurrentQuestion(telectx telebot.Context) error {
 	question, err := c.questionSrv.CurrentQuestion(telectx.Chat().ID)
 	if err != nil {
 		return err

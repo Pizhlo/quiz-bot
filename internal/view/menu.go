@@ -9,7 +9,8 @@ import (
 var (
 	BtnStartQuiz = tele.Btn{Text: "Начать квиз", Unique: "start_quiz"}
 
-	BtnStartFirstLevel = tele.Btn{Text: "Начать", Unique: "start_first_lvl"}
+	BtnStartFirstLevel  = tele.Btn{Text: "Начать", Unique: "start_first_lvl"}
+	BtnStartSecondLevel = tele.Btn{Text: "Начать", Unique: "start_second_lvl"}
 
 	BtnBackToMenu = tele.Btn{Text: "⬅️Меню", Unique: "menu"}
 
@@ -54,6 +55,16 @@ func StartFirstLevel() *tele.ReplyMarkup {
 
 	menu.Inline(
 		menu.Row(BtnStartFirstLevel),
+	)
+
+	return menu
+}
+
+func StartSecondLevel() *tele.ReplyMarkup {
+	menu := &tele.ReplyMarkup{}
+
+	menu.Inline(
+		menu.Row(BtnStartSecondLevel),
 	)
 
 	return menu
