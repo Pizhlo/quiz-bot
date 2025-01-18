@@ -9,6 +9,13 @@ import (
 )
 
 func (c *Controller) Answer(telectx telebot.Context) error {
+	// отправляем ответ в обработку
+	err := c.questionSrv.SetAnswer(telectx.Chat().ID, telectx.Text())
+	if err != nil {
+		return err
+	}
+
+	// получаем правильный ответ, чтобы показать пользователю
 	rigthAnswer, err := c.questionSrv.RigthAnswer(telectx.Chat().ID)
 	if err != nil {
 		return err
@@ -34,11 +41,12 @@ func (c *Controller) Next(telectx telebot.Context) error {
 		return c.sendCurrentQuestion(telectx)
 	}
 
-	// отправляем сообщение с описанием следующего раунда
-	return c.sendLevelMessage(telectx)
+	// отправляем сообщение с результатами раунда
+	return c.levelResuls(telectx)
 }
 
-func (c *Controller) sendLevelMessage(telectx telebot.Context) error {
+// sendLevelMessage отправляет сообщение с описанием уровня
+func (c *Controller) SendLevelMessage(telectx telebot.Context) error {
 	lvl, err := c.questionSrv.CurrentLevel(telectx.Chat().ID)
 	if err != nil {
 		return err
@@ -56,6 +64,22 @@ func (c *Controller) sendLevelMessage(telectx telebot.Context) error {
 	default:
 		return fmt.Errorf("unknown lvl: %+v", lvl)
 	}
+}
+
+func (c *Controller) levelResuls(telectx telebot.Context) error {
+	rigthAns, err := c.questionSrv.LevelResults(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	questionsNum, err := c.questionSrv.QuestionNum(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	msg := fmt.Sprintf(message.LevelEnd, rigthAns, questionsNum)
+
+	return telectx.EditOrSend(msg, view.NewLvl())
 }
 
 func (c *Controller) results(telectx telebot.Context) error {

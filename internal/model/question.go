@@ -28,13 +28,8 @@ func (s *SimpleQuestion) SetUserAnswer(user int64, answer string) {
 	s.UserAnswer[user] = answer
 }
 
-func (s *SimpleQuestion) Valid(user int64) (bool, error) {
-	answer, ok := s.UserAnswer[user]
-	if !ok {
-		return false, fmt.Errorf("not found user's answer")
-	}
-
-	return s.RigthAnswer == answer, nil
+func (s *SimpleQuestion) Valid(answer string) bool {
+	return s.RigthAnswer == answer
 }
 
 // вопрос, у которого несколько правильных ответов
@@ -48,11 +43,6 @@ func (s *HardQuestion) SetUserAnswer(user int64, answer []string) {
 	s.UserAnswers[user] = answer
 }
 
-func (s *HardQuestion) Valid(user int64) (bool, error) {
-	answer, ok := s.UserAnswers[user]
-	if !ok {
-		return false, fmt.Errorf("not found user's answer")
-	}
-
-	return reflect.DeepEqual(answer, s.RigthAnswers), nil
+func (s *HardQuestion) Valid(answers []string) bool {
+	return reflect.DeepEqual(answers, s.RigthAnswers)
 }

@@ -42,6 +42,53 @@ func (s *Question) CurrentQuestion(userID int64) (*model.Question, error) {
 	}
 }
 
+func (s *Question) SetAnswer(userID int64, answer string) error {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return err
+	}
+
+	switch state.level {
+	case firstLevel:
+		question := s.firstLevel[state.question]
+		if question.Valid(answer) {
+			state.rigthAnswers++
+			s.saveState(userID, state)
+		}
+	case thirdLevel:
+		question := s.thirdLevel[state.question]
+		if question.Valid(answer) {
+			state.rigthAnswers++
+			s.saveState(userID, state)
+		}
+	default:
+		return fmt.Errorf("invalid level for simple question: %+v", state.level)
+	}
+
+	return nil
+}
+
+func (s *Question) SetAnswers(userID int64, answers []string) error {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return err
+	}
+
+	switch state.level {
+	case secondLevel:
+		question := s.secondLevel[state.question]
+
+		if question.Valid(answers) {
+			state.rigthAnswers++
+			s.saveState(userID, state)
+		}
+	default:
+		return fmt.Errorf("invalid level for hard question: %+v", state.level)
+	}
+
+	return nil
+}
+
 func (s *Question) CurrentLevel(userID int64) (int, error) {
 	state, err := s.stateByUser(userID)
 	if err != nil {
@@ -120,4 +167,13 @@ func (s *Question) IsQuestionLast(userID int64) (bool, error) {
 	}
 
 	return state.isQuestionLast(), nil
+}
+
+func (s *Question) QuestionNum(userID int64) (int, error) {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return state.maxQuestions, nil
 }

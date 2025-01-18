@@ -39,4 +39,8 @@ func (s *Server) buttonHandlers(ctx context.Context) {
 	s.bot.Handle(&view.BtnNext, func(ctx telebot.Context) error {
 		return s.controller.Next(ctx)
 	})
+
+	s.bot.Handle(&view.BtnNewLvl, func(ctx telebot.Context) error {
+		return s.controller.SendLevelMessage(ctx)
+	})
 }
