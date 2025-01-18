@@ -1,7 +1,15 @@
-package quizbot
+package main
 
-import "fmt"
+import (
+	"flag"
+	"quiz-mod/cmd/bot"
+)
 
 func main() {
-	fmt.Println("hello world!")
+	fileName := flag.String("filename", ".env", "name of config file")
+	path := flag.String("path", ".", "path to config file")
+
+	flag.Parse()
+
+	bot.Start(*fileName, *path)
 }
