@@ -8,37 +8,67 @@ import (
 	"gopkg.in/telebot.v3"
 )
 
-func (c *Controller) Answer(telectx telebot.Context) error {
-	lvl, err := c.questionSrv.CurrentLevel(telectx.Chat().ID)
-	if err != nil {
-		return err
-	}
-
+func (c *Controller) SimpleAnswer(telectx telebot.Context) error {
 	// получаем правильный ответ, чтобы показать пользователю
 	rigthAnswer, err := c.questionSrv.RigthAnswer(telectx.Chat().ID)
 	if err != nil {
 		return err
 	}
 
-	switch lvl {
-	case 0, 2:
-		// отправляем ответ в обработку
-		err := c.questionSrv.SetAnswer(telectx.Chat().ID, telectx.Data())
-		if err != nil {
-			return err
-		}
-	case 1:
-		err := c.questionSrv.SetAnswers(telectx.Chat().ID, []string{telectx.Text()})
-		if err != nil {
-			return err
-		}
+	// отправляем ответ в обработку
+	err = c.questionSrv.SetAnswer(telectx.Chat().ID, telectx.Data())
+	if err != nil {
+		return err
 	}
 
-	text := telectx.Text()
+	text, err := c.questionSrv.Message(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
 
-	msg := fmt.Sprintf("%s\n\nПравильный ответ: %+v", text, rigthAnswer)
+	msg := fmt.Sprintf("%s\n\nПравильный ответ: %+v", text, rigthAnswer[0])
 
 	return telectx.EditOrSend(msg, view.Next())
+}
+
+func (c *Controller) Answer(telectx telebot.Context) error {
+	// сохраняем ответ в список
+	err := c.questionSrv.AddAnswer(telectx.Chat().ID, telectx.Data())
+	if err != nil {
+		return err
+	}
+
+	msg, err := c.questionSrv.Message(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	question, err := c.questionSrv.CurrentQuestion(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	userAnswers, err := c.questionSrv.UserAnswers(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	answers := []string{}
+
+	// нужно обозначить, какие варианты пользователь уже выбрал
+	for _, answer := range question.Answers {
+		for _, userAns := range userAnswers {
+			if answer == userAns {
+				answer = fmt.Sprintf("✅%s", answer)
+			}
+		}
+
+		answers = append(answers, answer)
+	}
+
+	menu := view.Answers(answers)
+
+	return telectx.EditOrSend(msg, menu)
 }
 
 func (c *Controller) Next(telectx telebot.Context) error {

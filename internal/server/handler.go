@@ -67,6 +67,15 @@ func (s *Server) buttonHandlers(ctx context.Context) {
 		return nil
 	})
 
+	s.bot.Handle(&view.BtnSimpleAnswer, func(ctx telebot.Context) error {
+		err := s.controller.SimpleAnswer(ctx)
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
+	})
+
 	s.bot.Handle(&view.BtnAnswer, func(ctx telebot.Context) error {
 		err := s.controller.Answer(ctx)
 		if err != nil {

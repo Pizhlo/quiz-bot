@@ -16,8 +16,13 @@ var (
 
 	BtnNext = tele.Btn{Text: "Дальше➡️", Unique: "next"}
 
-	// кнопка для ответов
+	// кнопка для простых ответов ответов
+	BtnSimpleAnswer = tele.Btn{Unique: "simple_answer"}
+
+	// кнопка для 2 раунда, где несколько вариантов ответа
 	BtnAnswer = tele.Btn{Unique: "answer"}
+	// кнопка для отправки ответа (для множественного выбора)
+	BtnSendAnswer = tele.Btn{Text: "Ответить", Unique: "send_answer"}
 )
 
 func MainMenu() *tele.ReplyMarkup {
@@ -80,6 +85,27 @@ func StartSecondLevel() *tele.ReplyMarkup {
 	return menu
 }
 
+func SimpleAnswers(answers []string) *tele.ReplyMarkup {
+	btns := []tele.Btn{}
+
+	for _, answer := range answers {
+		BtnSimpleAnswer.Text = answer
+		BtnSimpleAnswer.Data = answer
+
+		btns = append(btns, BtnSimpleAnswer)
+	}
+
+	btns = append(btns, BtnBackToMenu)
+
+	menu := &tele.ReplyMarkup{}
+
+	menu.Inline(
+		menu.Split(2, btns)...,
+	)
+
+	return menu
+}
+
 func Answers(answers []string) *tele.ReplyMarkup {
 	btns := []tele.Btn{}
 
@@ -90,7 +116,7 @@ func Answers(answers []string) *tele.ReplyMarkup {
 		btns = append(btns, BtnAnswer)
 	}
 
-	btns = append(btns, BtnBackToMenu)
+	btns = append(btns, BtnBackToMenu, BtnSendAnswer)
 
 	menu := &tele.ReplyMarkup{}
 

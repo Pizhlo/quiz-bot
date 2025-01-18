@@ -2,6 +2,15 @@ package question
 
 import "github.com/sirupsen/logrus"
 
+func (s *Question) CurrentLevel(userID int64) (int, error) {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return state.level, nil
+}
+
 func (s *Question) StartFirstLvl(userID int64) {
 	logrus.Debugf("Start first level with user %d", userID)
 

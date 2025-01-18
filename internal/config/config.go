@@ -11,7 +11,7 @@ import (
 
 type Config struct {
 	FirstLevel  []model.SimpleQuestion `json:"first_level"`
-	SecondLevel []model.HardQuestion   `json:"second_level"`
+	SecondLevel []*model.HardQuestion  `json:"second_level"`
 	ThirdLevel  []model.SimpleQuestion `json:"third_level"`
 }
 
