@@ -15,14 +15,20 @@ func (c *Controller) StartFirstLevel(ctx context.Context, telectx telebot.Contex
 
 func (c *Controller) StartSecondLevel(ctx context.Context, telectx telebot.Context) error {
 	// начинаем первый уровень - выставляем номер уровня и вопроса
-	c.questionSrv.StartSecondLvl(telectx.Chat().ID)
+	err := c.questionSrv.StartSecondLvl(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
 
 	return c.sendCurrentQuestion(telectx)
 }
 
 func (c *Controller) StartThirdLevel(ctx context.Context, telectx telebot.Context) error {
 	// начинаем первый уровень - выставляем номер уровня и вопроса
-	c.questionSrv.StartThirdLvl(telectx.Chat().ID)
+	err := c.questionSrv.StartThirdLvl(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
 
 	return c.sendCurrentQuestion(telectx)
 }

@@ -171,7 +171,33 @@ func (c *Controller) levelResuls(telectx telebot.Context) error {
 }
 
 func (c *Controller) results(telectx telebot.Context) error {
-	return telectx.EditOrSend("results", view.BackToMenu())
+	res, err := c.questionSrv.Results(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	duration := res.Duration.String()
+
+	result := fmt.Sprintf(message.Result, res.RigthAnswers[0], len(c.cfg.FirstLevel),
+		res.RigthAnswers[1], len(c.cfg.SecondLevel),
+		res.RigthAnswers[2], len(c.cfg.ThirdLevel),
+		duration)
+
+	msg := fmt.Sprintf(message.ResultMessage, result)
+
+	err = telectx.EditOrSend(msg, view.BackToMenu())
+	if err != nil {
+		return err
+	}
+
+	return c.sendResultsToChan(telectx.Chat().Username, result)
+}
+
+func (c *Controller) sendResultsToChan(username, result string) error {
+	msg := fmt.Sprintf(message.ChannelResultMessage, username, result)
+
+	_, err := c.bot.Send(&telebot.Chat{ID: int64(c.channelID)}, msg)
+	return err
 }
 
 func (c *Controller) OnText(telectx telebot.Context) error {
@@ -180,6 +206,11 @@ func (c *Controller) OnText(telectx telebot.Context) error {
 	switch lvl {
 	case 2:
 		rigthAnswers, err := c.questionSrv.RigthAnswer(telectx.Chat().ID)
+		if err != nil {
+			return err
+		}
+
+		err = c.questionSrv.SetAnswer(telectx.Chat().ID, telectx.Text())
 		if err != nil {
 			return err
 		}

@@ -94,7 +94,7 @@ func Start(envFile, confName, path string) {
 
 	questionSrv := question.New(cfg)
 
-	controller := controller.New(bot, channelID, questionSrv)
+	controller := controller.New(bot, channelID, cfg, questionSrv)
 
 	server := server.New(bot, controller)
 

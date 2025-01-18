@@ -1,6 +1,10 @@
 package question
 
-import "fmt"
+import (
+	"fmt"
+	"quiz-mod/internal/model"
+	"time"
+)
 
 const (
 	firstLevel = iota
@@ -13,6 +17,8 @@ type userState struct {
 	question     int // текущий вопрос
 	maxQuestions int // всего вопросов
 	rigthAnswers int // правильных ответов
+	startTime    time.Time
+	result       model.Result
 }
 
 // isQuestionLast возвращает true, если текущий вопрос - последний в раунде
