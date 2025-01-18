@@ -22,16 +22,6 @@ func LoadConfig(filename, path string) (*Config, error) {
 
 	cfg := Config{}
 
-	// err := viper.ReadInConfig()
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// err = viper.Unmarshal(&cfg)
-	// if err != nil {
-	// 	return nil, fmt.Errorf(`unable to unmarshal config: %+v`, err)
-	// }
-
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
