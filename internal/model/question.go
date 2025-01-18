@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"quiz-mod/internal/message"
 	"reflect"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
@@ -37,7 +38,7 @@ func (s *SimpleQuestion) SetUserAnswer(user int64, answer string) {
 }
 
 func (s *SimpleQuestion) Valid(answer string) bool {
-	return s.RigthAnswer == answer
+	return strings.EqualFold(s.RigthAnswer, answer)
 }
 
 // вопрос, у которого несколько правильных ответов

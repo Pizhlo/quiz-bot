@@ -1,6 +1,10 @@
 package question
 
-import "fmt"
+import (
+	"fmt"
+	"quiz-mod/internal/model"
+	"time"
+)
 
 func (s *Question) SetAnswer(userID int64, answer string) error {
 	state, err := s.stateByUser(userID)
@@ -11,14 +15,18 @@ func (s *Question) SetAnswer(userID int64, answer string) error {
 	switch state.level {
 	case firstLevel:
 		question := s.firstLevel[state.question]
+
 		if question.Valid(answer) {
 			state.rigthAnswers++
+			state.result.SaveAnswers(firstLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	case thirdLevel:
 		question := s.thirdLevel[state.question]
+
 		if question.Valid(answer) {
 			state.rigthAnswers++
+			state.result.SaveAnswers(thirdLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	default:
@@ -40,6 +48,8 @@ func (s *Question) SaveAnswers(userID int64) error {
 
 		if question.Valid(userID) {
 			state.rigthAnswers++
+
+			state.result.SaveAnswers(secondLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	default:
@@ -101,4 +111,17 @@ func (s *Question) UserAnswers(userID int64) ([]string, error) {
 	default:
 		return nil, fmt.Errorf("invalid level for hard question: %+v", state.level)
 	}
+}
+
+func (s *Question) Results(userID int64) (model.Result, error) {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return model.Result{}, err
+	}
+
+	res := state.result
+
+	res.Duration = time.Since(state.startTime)
+
+	return res, nil
 }

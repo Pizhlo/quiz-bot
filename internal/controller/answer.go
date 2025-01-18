@@ -146,7 +146,7 @@ func (c *Controller) SendLevelMessage(telectx telebot.Context) error {
 		return telectx.EditOrSend(message.SecondLvlMessage, view.StartSecondLevel())
 	case 1:
 		c.questionSrv.SetNext(telectx.Chat().ID)
-		return telectx.EditOrSend(message.SecondLvlMessage, view.StartSecondLevel())
+		return telectx.EditOrSend(message.ThirdLvlMessage, view.StartThirdLevel())
 	case 2:
 		return c.results(telectx)
 	default:
@@ -171,5 +171,59 @@ func (c *Controller) levelResuls(telectx telebot.Context) error {
 }
 
 func (c *Controller) results(telectx telebot.Context) error {
-	return telectx.EditOrSend("results", view.BackToMenu())
+	res, err := c.questionSrv.Results(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	duration := res.Duration.String()
+
+	result := fmt.Sprintf(message.Result, res.RigthAnswers[0], len(c.cfg.FirstLevel),
+		res.RigthAnswers[1], len(c.cfg.SecondLevel),
+		res.RigthAnswers[2], len(c.cfg.ThirdLevel),
+		duration)
+
+	msg := fmt.Sprintf(message.ResultMessage, result)
+
+	err = telectx.EditOrSend(msg, view.BackToMenu())
+	if err != nil {
+		return err
+	}
+
+	return c.sendResultsToChan(telectx.Chat().Username, result)
+}
+
+func (c *Controller) sendResultsToChan(username, result string) error {
+	msg := fmt.Sprintf(message.ChannelResultMessage, username, result)
+
+	_, err := c.bot.Send(&telebot.Chat{ID: int64(c.channelID)}, msg)
+	return err
+}
+
+func (c *Controller) OnText(telectx telebot.Context) error {
+	lvl, _ := c.questionSrv.CurrentLevel(telectx.Chat().ID) // не надо проверять ошибку - если бот не знает пользователя, не надо реагировать
+
+	switch lvl {
+	case 2:
+		rigthAnswers, err := c.questionSrv.RigthAnswer(telectx.Chat().ID)
+		if err != nil {
+			return err
+		}
+
+		err = c.questionSrv.SetAnswer(telectx.Chat().ID, telectx.Text())
+		if err != nil {
+			return err
+		}
+
+		text, err := c.questionSrv.Message(telectx.Chat().ID)
+		if err != nil {
+			return err
+		}
+
+		msg := fmt.Sprintf("%s\n\nТвой ответ: %s\nПравильный ответ: %+v", text, telectx.Text(), rigthAnswers[0])
+
+		return telectx.EditOrSend(msg, view.Next())
+	default:
+		return nil
+	}
 }

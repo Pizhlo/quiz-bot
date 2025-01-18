@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"quiz-mod/internal/config"
 	"quiz-mod/internal/message"
 	"quiz-mod/internal/service/question"
 	"quiz-mod/internal/view"
@@ -15,16 +16,19 @@ type Controller struct {
 	mu          sync.Mutex
 	bot         *tele.Bot
 	channelID   int
+	cfg         *config.Config
 	questionSrv *question.Question
 }
 
 func New(bot *tele.Bot,
 	channelID int,
+	cfg *config.Config,
 	questionSrv *question.Question) *Controller {
 
 	return &Controller{
 		bot:         bot,
 		mu:          sync.Mutex{},
+		cfg:         cfg,
 		channelID:   channelID,
 		questionSrv: questionSrv,
 	}

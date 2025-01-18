@@ -27,6 +27,15 @@ func (s *Server) commandHandlers() {
 
 		return nil
 	})
+
+	s.bot.Handle(telebot.OnText, func(ctx telebot.Context) error {
+		err := s.controller.OnText(ctx)
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
+	})
 }
 
 func (s *Server) buttonHandlers(ctx context.Context) {
@@ -60,6 +69,15 @@ func (s *Server) buttonHandlers(ctx context.Context) {
 
 	s.bot.Handle(&view.BtnStartSecondLevel, func(telectx telebot.Context) error {
 		err := s.controller.StartSecondLevel(ctx, telectx)
+		if err != nil {
+			s.controller.HandleError(telectx, err)
+		}
+
+		return nil
+	})
+
+	s.bot.Handle(&view.BtnStartThirdLevel, func(telectx telebot.Context) error {
+		err := s.controller.StartThirdLevel(ctx, telectx)
 		if err != nil {
 			s.controller.HandleError(telectx, err)
 		}
