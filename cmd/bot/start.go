@@ -100,7 +100,7 @@ func Start(envFile, confName, path string) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	server.Start(ctx)
+	server.Start()
 
 	go func() {
 		_, msgErr := bot.Send(&tele.Chat{ID: int64(channelID)}, "Бот запущен")
