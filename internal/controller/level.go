@@ -19,3 +19,10 @@ func (c *Controller) StartSecondLevel(ctx context.Context, telectx telebot.Conte
 
 	return c.sendCurrentQuestion(telectx)
 }
+
+func (c *Controller) StartThirdLevel(ctx context.Context, telectx telebot.Context) error {
+	// начинаем первый уровень - выставляем номер уровня и вопроса
+	c.questionSrv.StartThirdLvl(telectx.Chat().ID)
+
+	return c.sendCurrentQuestion(telectx)
+}

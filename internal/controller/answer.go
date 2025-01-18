@@ -146,7 +146,7 @@ func (c *Controller) SendLevelMessage(telectx telebot.Context) error {
 		return telectx.EditOrSend(message.SecondLvlMessage, view.StartSecondLevel())
 	case 1:
 		c.questionSrv.SetNext(telectx.Chat().ID)
-		return telectx.EditOrSend(message.SecondLvlMessage, view.StartSecondLevel())
+		return telectx.EditOrSend(message.ThirdLvlMessage, view.StartThirdLevel())
 	case 2:
 		return c.results(telectx)
 	default:
@@ -172,4 +172,27 @@ func (c *Controller) levelResuls(telectx telebot.Context) error {
 
 func (c *Controller) results(telectx telebot.Context) error {
 	return telectx.EditOrSend("results", view.BackToMenu())
+}
+
+func (c *Controller) OnText(telectx telebot.Context) error {
+	lvl, _ := c.questionSrv.CurrentLevel(telectx.Chat().ID) // не надо проверять ошибку - если бот не знает пользователя, не надо реагировать
+
+	switch lvl {
+	case 2:
+		rigthAnswers, err := c.questionSrv.RigthAnswer(telectx.Chat().ID)
+		if err != nil {
+			return err
+		}
+
+		text, err := c.questionSrv.Message(telectx.Chat().ID)
+		if err != nil {
+			return err
+		}
+
+		msg := fmt.Sprintf("%s\n\nТвой ответ: %s\nПравильный ответ: %+v", text, telectx.Text(), rigthAnswers[0])
+
+		return telectx.EditOrSend(msg, view.Next())
+	default:
+		return nil
+	}
 }
