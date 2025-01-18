@@ -1,38 +1,58 @@
 package model
 
-import "reflect"
+import (
+	"fmt"
+	"quiz-mod/internal/message"
+	"reflect"
+)
 
-type question struct {
+type Question struct {
 	Text    string   `json:"question"`
 	Answers []string `json:"answers"`
 }
 
+func (q *Question) QuestionText(currIdx, maxIdx int) string {
+	msg := message.Question
+
+	return fmt.Sprintf(msg, currIdx, maxIdx, q.Text)
+}
+
 // вопрос, у которого только один правильный ответ
 type SimpleQuestion struct {
-	question
+	Question
 	RigthAnswer string `json:"rigth_answer"`
-	UserAnswer  string
+	UserAnswer  map[int64]string
 }
 
-func (s *SimpleQuestion) SetUserAnswer(answer string) {
-	s.UserAnswer = answer
+func (s *SimpleQuestion) SetUserAnswer(user int64, answer string) {
+	s.UserAnswer[user] = answer
 }
 
-func (s *SimpleQuestion) Valid() bool {
-	return s.RigthAnswer == s.UserAnswer
+func (s *SimpleQuestion) Valid(user int64) (bool, error) {
+	answer, ok := s.UserAnswer[user]
+	if !ok {
+		return false, fmt.Errorf("not found user's answer")
+	}
+
+	return s.RigthAnswer == answer, nil
 }
 
 // вопрос, у которого несколько правильных ответов
 type HardQuestion struct {
-	question
+	Question
 	RigthAnswers []string `json:"rigth_answers"`
-	UserAnswers  []string
+	UserAnswers  map[int64][]string
 }
 
-func (s *HardQuestion) SetUserAnswer(answer []string) {
-	s.UserAnswers = answer
+func (s *HardQuestion) SetUserAnswer(user int64, answer []string) {
+	s.UserAnswers[user] = answer
 }
 
-func (s *HardQuestion) Valid() bool {
-	return reflect.DeepEqual(s.UserAnswers, s.RigthAnswers)
+func (s *HardQuestion) Valid(user int64) (bool, error) {
+	answer, ok := s.UserAnswers[user]
+	if !ok {
+		return false, fmt.Errorf("not found user's answer")
+	}
+
+	return reflect.DeepEqual(answer, s.RigthAnswers), nil
 }
