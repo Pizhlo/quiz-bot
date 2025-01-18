@@ -22,7 +22,7 @@ var (
 	// кнопка для 2 раунда, где несколько вариантов ответа
 	BtnAnswer = tele.Btn{Unique: "answer"}
 	// кнопка для отправки ответа (для множественного выбора)
-	BtnSendAnswer = tele.Btn{Text: "Ответить", Unique: "send_answer"}
+	BtnSendAnswer = tele.Btn{Text: "📝Ответить", Unique: "send_answer"}
 )
 
 func MainMenu() *tele.ReplyMarkup {
@@ -40,6 +40,7 @@ func Next() *tele.ReplyMarkup {
 
 	menu.Inline(
 		menu.Row(BtnNext),
+		menu.Row(BtnBackToMenu),
 	)
 
 	return menu
@@ -50,6 +51,7 @@ func NewLvl() *tele.ReplyMarkup {
 
 	menu.Inline(
 		menu.Row(BtnNewLvl),
+		menu.Row(BtnBackToMenu),
 	)
 
 	return menu
@@ -70,6 +72,7 @@ func StartFirstLevel() *tele.ReplyMarkup {
 
 	menu.Inline(
 		menu.Row(BtnStartFirstLevel),
+		menu.Row(BtnBackToMenu),
 	)
 
 	return menu
@@ -80,6 +83,7 @@ func StartSecondLevel() *tele.ReplyMarkup {
 
 	menu.Inline(
 		menu.Row(BtnStartSecondLevel),
+		menu.Row(BtnBackToMenu),
 	)
 
 	return menu

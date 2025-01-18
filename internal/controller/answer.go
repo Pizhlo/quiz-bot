@@ -26,7 +26,7 @@ func (c *Controller) SimpleAnswer(telectx telebot.Context) error {
 		return err
 	}
 
-	msg := fmt.Sprintf("%s\n\nПравильный ответ: %+v", text, rigthAnswer[0])
+	msg := fmt.Sprintf("%s\n\nТвой ответ: %s\nПравильный ответ: %+v", text, telectx.Data(), rigthAnswer[0])
 
 	return telectx.EditOrSend(msg, view.Next())
 }
@@ -69,6 +69,46 @@ func (c *Controller) Answer(telectx telebot.Context) error {
 	menu := view.Answers(answers)
 
 	return telectx.EditOrSend(msg, menu)
+}
+
+// SendAnswer обрабатывает кнопку "отправить" второго уровня при множественном выборе
+func (c *Controller) SendAnswer(telectx telebot.Context) error {
+	// получаем правильный ответ, чтобы показать пользователю
+	rigthAnswers, err := c.questionSrv.RigthAnswer(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	text, err := c.questionSrv.Message(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	answers := ""
+
+	for _, ans := range rigthAnswers {
+		answers += fmt.Sprintf("%s ", ans)
+	}
+
+	userAnswers, err := c.questionSrv.UserAnswers(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	userAnsString := ""
+
+	for _, uAns := range userAnswers {
+		userAnsString += fmt.Sprintf("%s ", uAns)
+	}
+
+	err = c.questionSrv.SaveAnswers(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	msg := fmt.Sprintf("%s\n\nТвой ответ: %s\nПравильный ответ: %+v", text, userAnsString, answers)
+
+	return telectx.EditOrSend(msg, view.Next())
 }
 
 func (c *Controller) Next(telectx telebot.Context) error {

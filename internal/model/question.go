@@ -57,6 +57,7 @@ func (s *HardQuestion) AddUserAnswer(user int64, answer string) {
 	s.UserAnswers[user] = append(s.UserAnswers[user], answer)
 }
 
-func (s *HardQuestion) Valid(answers []string) bool {
+func (s *HardQuestion) Valid(userID int64) bool {
+	answers := s.UserAnswers[userID]
 	return reflect.DeepEqual(answers, s.RigthAnswers)
 }

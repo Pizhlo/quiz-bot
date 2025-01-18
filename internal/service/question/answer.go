@@ -28,6 +28,27 @@ func (s *Question) SetAnswer(userID int64, answer string) error {
 	return nil
 }
 
+func (s *Question) SaveAnswers(userID int64) error {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return err
+	}
+
+	switch state.level {
+	case secondLevel:
+		question := s.secondLevel[state.question]
+
+		if question.Valid(userID) {
+			state.rigthAnswers++
+			s.saveState(userID, state)
+		}
+	default:
+		return fmt.Errorf("invalid level for hard question: %+v", state.level)
+	}
+
+	return nil
+}
+
 func (s *Question) AddAnswer(userID int64, answer string) error {
 	state, err := s.stateByUser(userID)
 	if err != nil {
