@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"quiz-mod/internal/controller"
 
 	"github.com/sirupsen/logrus"
@@ -19,9 +20,9 @@ func New(bot *tele.Bot, controller *controller.Controller) *Server {
 	}
 }
 
-func (s *Server) Start() {
+func (s *Server) Start(ctx context.Context) {
 	s.commandHandlers()
-	s.buttonHandlers()
+	s.buttonHandlers(ctx)
 
 	logrus.Info("server started")
 }

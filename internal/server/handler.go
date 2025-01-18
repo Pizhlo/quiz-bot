@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"quiz-mod/internal/command"
 	"quiz-mod/internal/message"
 	"quiz-mod/internal/view"
@@ -18,8 +19,12 @@ func (s *Server) commandHandlers() {
 	})
 }
 
-func (s *Server) buttonHandlers() {
+func (s *Server) buttonHandlers(ctx context.Context) {
 	s.bot.Handle(&view.BtnStartQuiz, func(ctx telebot.Context) error {
 		return ctx.EditOrSend(message.FirstMessage, view.StartFirstLevel())
+	})
+
+	s.bot.Handle(&view.BtnStartFirstLevel, func(telectx telebot.Context) error {
+		return s.controller.StartFirstLevel(ctx, telectx)
 	})
 }

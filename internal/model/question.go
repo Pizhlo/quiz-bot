@@ -1,15 +1,25 @@
 package model
 
-import "reflect"
+import (
+	"fmt"
+	"quiz-mod/internal/message"
+	"reflect"
+)
 
-type question struct {
+type Question struct {
 	Text    string   `json:"question"`
 	Answers []string `json:"answers"`
 }
 
+func (q *Question) QuestionText(currIdx, maxIdx int) string {
+	msg := message.Question
+
+	return fmt.Sprintf(msg, currIdx, maxIdx, q.Text)
+}
+
 // вопрос, у которого только один правильный ответ
 type SimpleQuestion struct {
-	question
+	Question
 	RigthAnswer string `json:"rigth_answer"`
 	UserAnswer  string
 }
@@ -24,7 +34,7 @@ func (s *SimpleQuestion) Valid() bool {
 
 // вопрос, у которого несколько правильных ответов
 type HardQuestion struct {
-	question
+	Question
 	RigthAnswers []string `json:"rigth_answers"`
 	UserAnswers  []string
 }

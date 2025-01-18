@@ -7,6 +7,7 @@ import (
 	"quiz-mod/internal/config"
 	"quiz-mod/internal/controller"
 	"quiz-mod/internal/server"
+	"quiz-mod/internal/service/question"
 	"strconv"
 	"sync"
 	"syscall"
@@ -44,7 +45,7 @@ func Start(envFile, confName, path string) {
 
 	logrus.Infof("log level: %+v", logrus.GetLevel())
 
-	_, err := config.LoadConfig(confName, path)
+	cfg, err := config.LoadConfig(confName, path)
 	if err != nil {
 		logrus.Fatalf("unable to load config: %v", err)
 	}
@@ -91,7 +92,9 @@ func Start(envFile, confName, path string) {
 
 	logrus.Info("successfully created bot")
 
-	controller := controller.New(bot, channelID)
+	questionSrv := question.New(cfg)
+
+	controller := controller.New(bot, channelID, questionSrv)
 
 	server := server.New(bot, controller)
 
@@ -100,7 +103,7 @@ func Start(envFile, confName, path string) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	server.Start()
+	server.Start(ctx)
 
 	go func() {
 		_, msgErr := bot.Send(&tele.Chat{ID: int64(channelID)}, "Бот запущен")
