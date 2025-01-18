@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"quiz-mod/internal/message"
 	"reflect"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Question struct {
@@ -25,16 +27,17 @@ type SimpleQuestion struct {
 }
 
 func (s *SimpleQuestion) SetUserAnswer(user int64, answer string) {
+	if s.UserAnswer == nil {
+		s.UserAnswer = make(map[int64]string)
+	}
+
+	logrus.Debugf("Set user's answer. User: %+v. Answer: %+v", user, answer)
+
 	s.UserAnswer[user] = answer
 }
 
-func (s *SimpleQuestion) Valid(user int64) (bool, error) {
-	answer, ok := s.UserAnswer[user]
-	if !ok {
-		return false, fmt.Errorf("not found user's answer")
-	}
-
-	return s.RigthAnswer == answer, nil
+func (s *SimpleQuestion) Valid(answer string) bool {
+	return s.RigthAnswer == answer
 }
 
 // вопрос, у которого несколько правильных ответов
@@ -44,15 +47,17 @@ type HardQuestion struct {
 	UserAnswers  map[int64][]string
 }
 
-func (s *HardQuestion) SetUserAnswer(user int64, answer []string) {
-	s.UserAnswers[user] = answer
-}
-
-func (s *HardQuestion) Valid(user int64) (bool, error) {
-	answer, ok := s.UserAnswers[user]
-	if !ok {
-		return false, fmt.Errorf("not found user's answer")
+func (s *HardQuestion) AddUserAnswer(user int64, answer string) {
+	if s.UserAnswers == nil {
+		s.UserAnswers = make(map[int64][]string)
 	}
 
-	return reflect.DeepEqual(answer, s.RigthAnswers), nil
+	logrus.Debugf("Added user's answer. User: %+v. Answer: %+v", user, answer)
+
+	s.UserAnswers[user] = append(s.UserAnswers[user], answer)
+}
+
+func (s *HardQuestion) Valid(userID int64) bool {
+	answers := s.UserAnswers[userID]
+	return reflect.DeepEqual(answers, s.RigthAnswers)
 }

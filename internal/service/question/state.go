@@ -9,9 +9,10 @@ const (
 )
 
 type userState struct {
-	level        int
-	question     int
-	maxQuestions int
+	level        int // текущий уровень
+	question     int // текущий вопрос
+	maxQuestions int // всего вопросов
+	rigthAnswers int // правильных ответов
 }
 
 // isQuestionLast возвращает true, если текущий вопрос - последний в раунде
@@ -30,4 +31,13 @@ func (s *Question) stateByUser(userID int64) (userState, error) {
 
 func (s *Question) saveState(userID int64, state userState) {
 	s.users[userID] = state
+}
+
+func (s *Question) RigthAnswers(userID int64) (int, error) {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return state.rigthAnswers, nil
 }

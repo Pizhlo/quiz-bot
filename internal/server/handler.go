@@ -11,32 +11,105 @@ import (
 
 func (s *Server) commandHandlers() {
 	s.bot.Handle(command.Start, func(ctx telebot.Context) error {
-		return ctx.EditOrSend(message.StartMessage, view.MainMenu())
+		err := ctx.EditOrSend(message.StartMessage, view.MainMenu())
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
 	})
 
 	s.bot.Handle(command.Help, func(ctx telebot.Context) error {
-		return ctx.EditOrSend(message.HelpMessage)
+		err := ctx.EditOrSend(message.HelpMessage)
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
 	})
 }
 
 func (s *Server) buttonHandlers(ctx context.Context) {
 	s.bot.Handle(&view.BtnStartQuiz, func(ctx telebot.Context) error {
-		return ctx.EditOrSend(message.FirstLvlMessage, view.StartFirstLevel())
-	})
+		err := ctx.EditOrSend(message.FirstLvlMessage, view.StartFirstLevel())
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
 
-	s.bot.Handle(&view.BtnStartFirstLevel, func(telectx telebot.Context) error {
-		return s.controller.StartFirstLevel(ctx, telectx)
+		return nil
 	})
 
 	s.bot.Handle(&view.BtnBackToMenu, func(ctx telebot.Context) error {
-		return ctx.EditOrSend(message.StartMessage, view.MainMenu())
+		err := ctx.EditOrSend(message.StartMessage, view.MainMenu())
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
+	})
+
+	// lvls
+	s.bot.Handle(&view.BtnStartFirstLevel, func(telectx telebot.Context) error {
+		err := s.controller.StartFirstLevel(ctx, telectx)
+		if err != nil {
+			s.controller.HandleError(telectx, err)
+		}
+
+		return nil
+	})
+
+	s.bot.Handle(&view.BtnStartSecondLevel, func(telectx telebot.Context) error {
+		err := s.controller.StartSecondLevel(ctx, telectx)
+		if err != nil {
+			s.controller.HandleError(telectx, err)
+		}
+
+		return nil
+	})
+
+	// answers
+	s.bot.Handle(&view.BtnSimpleAnswer, func(ctx telebot.Context) error {
+		err := s.controller.SimpleAnswer(ctx)
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
 	})
 
 	s.bot.Handle(&view.BtnAnswer, func(ctx telebot.Context) error {
-		return s.controller.Answer(ctx)
+		err := s.controller.Answer(ctx)
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
+	})
+
+	s.bot.Handle(&view.BtnSendAnswer, func(ctx telebot.Context) error {
+		err := s.controller.SendAnswer(ctx)
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
 	})
 
 	s.bot.Handle(&view.BtnNext, func(ctx telebot.Context) error {
-		return s.controller.Next(ctx)
+		err := s.controller.Next(ctx)
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
+	})
+
+	s.bot.Handle(&view.BtnNewLvl, func(ctx telebot.Context) error {
+		err := s.controller.SendLevelMessage(ctx)
+		if err != nil {
+			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
 	})
 }
