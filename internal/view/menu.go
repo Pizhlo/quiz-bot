@@ -11,6 +11,10 @@ var (
 
 	BtnStartFirstLevel = tele.Btn{Text: "Начать", Unique: "start_first_lvl"}
 
+	BtnBackToMenu = tele.Btn{Text: "⬅️Меню", Unique: "menu"}
+
+	BtnNext = tele.Btn{Text: "Дальше➡️", Unique: "next"}
+
 	// кнопка для ответов
 	BtnAnswer = tele.Btn{Unique: "answer"}
 )
@@ -20,6 +24,26 @@ func MainMenu() *tele.ReplyMarkup {
 
 	menu.Inline(
 		menu.Row(BtnStartQuiz),
+	)
+
+	return menu
+}
+
+func Next() *tele.ReplyMarkup {
+	menu := &tele.ReplyMarkup{}
+
+	menu.Inline(
+		menu.Row(BtnNext),
+	)
+
+	return menu
+}
+
+func BackToMenu() *tele.ReplyMarkup {
+	menu := &tele.ReplyMarkup{}
+
+	menu.Inline(
+		menu.Row(BtnBackToMenu),
 	)
 
 	return menu
@@ -45,10 +69,12 @@ func Answers(answers []string) *tele.ReplyMarkup {
 		btns = append(btns, BtnAnswer)
 	}
 
+	btns = append(btns, BtnBackToMenu)
+
 	menu := &tele.ReplyMarkup{}
 
 	menu.Inline(
-		menu.Row(btns...),
+		menu.Split(2, btns)...,
 	)
 
 	return menu

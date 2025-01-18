@@ -15,17 +15,6 @@ type Question struct {
 	users map[int64]userState // для хранения состояний пользователей
 }
 
-const (
-	firstLevel = iota
-	secondLevel
-	thirdLevel
-)
-
-type userState struct {
-	level    int
-	question int
-}
-
 func New(cfg *config.Config) *Question {
 	return &Question{
 		firstLevel:  cfg.FirstLevel,
@@ -51,15 +40,6 @@ func (s *Question) CurrentQuestion(userID int64) (*model.Question, error) {
 	default:
 		return nil, fmt.Errorf("invalid level for simple question: %+v", state.level)
 	}
-}
-
-func (s *Question) stateByUser(userID int64) (userState, error) {
-	state, ok := s.users[userID]
-	if !ok {
-		return userState{}, fmt.Errorf("not found user's state by user ID")
-	}
-
-	return state, nil
 }
 
 func (s *Question) Message(userID int64) (string, error) {
@@ -89,4 +69,43 @@ func (s *Question) Message(userID int64) (string, error) {
 	default:
 		return "", fmt.Errorf("unknown level: %+v", state.level)
 	}
+}
+
+func (s *Question) RigthAnswer(userID int64) ([]string, error) {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	switch state.level {
+	case firstLevel:
+		question := s.firstLevel[state.question]
+		return []string{question.RigthAnswer}, nil
+	case secondLevel:
+		question := s.secondLevel[state.question]
+		return question.RigthAnswers, nil
+	case thirdLevel:
+		question := s.thirdLevel[state.question]
+		return []string{question.RigthAnswer}, nil
+	default:
+		return nil, fmt.Errorf("unknown level: %+v", state.level)
+	}
+}
+
+func (s *Question) SetNext(userID int64) error {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return err
+	}
+
+	if state.lastQuestion() {
+		state.level++
+		state.question = 0
+	} else {
+		state.question++
+	}
+
+	s.saveState(userID, state)
+
+	return nil
 }
