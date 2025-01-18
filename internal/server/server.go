@@ -20,7 +20,8 @@ func New(bot *tele.Bot, controller *controller.Controller) *Server {
 }
 
 func (s *Server) Start() {
-	s.commands()
+	s.commandHandlers()
+	s.buttonHandlers()
 
 	logrus.Info("server started")
 }
