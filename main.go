@@ -6,10 +6,11 @@ import (
 )
 
 func main() {
-	fileName := flag.String("filename", ".env", "name of config file")
-	path := flag.String("path", ".", "path to config file")
+	envFIle := flag.String("filename", ".env", "name of env file")
+	path := flag.String("path", ".", "path to env file")
+	configFile := flag.String("config file", "config.json", "name of config file")
 
 	flag.Parse()
 
-	bot.Start(*fileName, *path)
+	bot.Start(*envFIle, *configFile, *path)
 }

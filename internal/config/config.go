@@ -6,6 +6,7 @@ import (
 	"quiz-mod/internal/model"
 
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
@@ -14,8 +15,22 @@ type Config struct {
 	ThirdLevel  []model.SimpleQuestion `json:"third_level"`
 }
 
-func LoadConfig(filename string) (*Config, error) {
-	cfg := &Config{}
+func LoadConfig(filename, path string) (*Config, error) {
+	viper.SetConfigFile(filename)
+	viper.AddConfigPath(path)
+	viper.AutomaticEnv()
+
+	cfg := Config{}
+
+	// err := viper.ReadInConfig()
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// err = viper.Unmarshal(&cfg)
+	// if err != nil {
+	// 	return nil, fmt.Errorf(`unable to unmarshal config: %+v`, err)
+	// }
 
 	data, err := os.ReadFile(filename)
 	if err != nil {
@@ -31,5 +46,5 @@ func LoadConfig(filename string) (*Config, error) {
 	logrus.Infof("Config: second level: %d question(s)", len(cfg.SecondLevel))
 	logrus.Infof("Config: third level: %d question(s)", len(cfg.ThirdLevel))
 
-	return cfg, nil
+	return &cfg, nil
 }

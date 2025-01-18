@@ -3,14 +3,14 @@ package model
 import "reflect"
 
 type question struct {
-	text    string
-	answers []string
+	Text    string   `json:"question"`
+	Answers []string `json:"answers"`
 }
 
 // вопрос, у которого только один правильный ответ
 type SimpleQuestion struct {
 	question
-	RigthAnswer string
+	RigthAnswer string `json:"rigth_answer"`
 	UserAnswer  string
 }
 
@@ -25,7 +25,7 @@ func (s *SimpleQuestion) Valid() bool {
 // вопрос, у которого несколько правильных ответов
 type HardQuestion struct {
 	question
-	RigthAnswers []string
+	RigthAnswers []string `json:"rigth_answers"`
 	UserAnswers  []string
 }
 
