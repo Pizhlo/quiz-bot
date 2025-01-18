@@ -1,8 +1,6 @@
 package view
 
 import (
-	"fmt"
-
 	tele "gopkg.in/telebot.v3"
 )
 
@@ -85,9 +83,9 @@ func StartSecondLevel() *tele.ReplyMarkup {
 func Answers(answers []string) *tele.ReplyMarkup {
 	btns := []tele.Btn{}
 
-	for i, answer := range answers {
+	for _, answer := range answers {
 		BtnAnswer.Text = answer
-		BtnAnswer.Data = fmt.Sprintf("%d", i)
+		BtnAnswer.Data = answer
 
 		btns = append(btns, BtnAnswer)
 	}

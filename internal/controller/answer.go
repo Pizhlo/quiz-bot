@@ -9,8 +9,7 @@ import (
 )
 
 func (c *Controller) Answer(telectx telebot.Context) error {
-	// отправляем ответ в обработку
-	err := c.questionSrv.SetAnswer(telectx.Chat().ID, telectx.Text())
+	lvl, err := c.questionSrv.CurrentLevel(telectx.Chat().ID)
 	if err != nil {
 		return err
 	}
@@ -19,6 +18,20 @@ func (c *Controller) Answer(telectx telebot.Context) error {
 	rigthAnswer, err := c.questionSrv.RigthAnswer(telectx.Chat().ID)
 	if err != nil {
 		return err
+	}
+
+	switch lvl {
+	case 0, 2:
+		// отправляем ответ в обработку
+		err := c.questionSrv.SetAnswer(telectx.Chat().ID, telectx.Data())
+		if err != nil {
+			return err
+		}
+	case 1:
+		err := c.questionSrv.SetAnswers(telectx.Chat().ID, []string{telectx.Text()})
+		if err != nil {
+			return err
+		}
 	}
 
 	text := telectx.Text()
