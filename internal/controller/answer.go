@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"quiz-mod/internal/message"
 	"quiz-mod/internal/view"
+	"strings"
 
 	"gopkg.in/telebot.v3"
 )
@@ -87,8 +88,10 @@ func (c *Controller) SendAnswer(telectx telebot.Context) error {
 	answers := ""
 
 	for _, ans := range rigthAnswers {
-		answers += fmt.Sprintf("%s ", ans)
+		answers += fmt.Sprintf("%s, ", ans)
 	}
+
+	answers = strings.Trim(answers, ", ")
 
 	userAnswers, err := c.questionSrv.UserAnswers(telectx.Chat().ID)
 	if err != nil {
@@ -98,8 +101,10 @@ func (c *Controller) SendAnswer(telectx telebot.Context) error {
 	userAnsString := ""
 
 	for _, uAns := range userAnswers {
-		userAnsString += fmt.Sprintf("%s ", uAns)
+		userAnsString += fmt.Sprintf("%s, ", uAns)
 	}
+
+	userAnsString = strings.Trim(userAnsString, ", ")
 
 	err = c.questionSrv.SaveAnswers(telectx.Chat().ID)
 	if err != nil {
