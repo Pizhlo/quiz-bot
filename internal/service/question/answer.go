@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"quiz-mod/internal/model"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 func (s *Question) SetAnswer(userID int64, answer string) error {
@@ -19,7 +21,8 @@ func (s *Question) SetAnswer(userID int64, answer string) error {
 
 		if question.Valid(answer) {
 			state.rigthAnswers++
-			state.result.SaveAnswers(model.FirstLevel, state.rigthAnswers)
+			logrus.Debugf("set answer first lvl")
+			state.result.SaveAnswers(userID, model.FirstLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	case model.ThirdLevel:
@@ -27,7 +30,8 @@ func (s *Question) SetAnswer(userID int64, answer string) error {
 
 		if question.Valid(answer) {
 			state.rigthAnswers++
-			state.result.SaveAnswers(model.ThirdLevel, state.rigthAnswers)
+			logrus.Debugf("set answer third lvl")
+			state.result.SaveAnswers(userID, model.ThirdLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	default:
@@ -50,7 +54,7 @@ func (s *Question) SaveAnswers(userID int64) error {
 		if question.Valid(userID) {
 			state.rigthAnswers++
 
-			state.result.SaveAnswers(model.SecondLevel, state.rigthAnswers)
+			state.result.SaveAnswers(userID, model.SecondLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	default:

@@ -5,14 +5,14 @@ import (
 )
 
 var (
-	BtnStartQuiz = tele.Btn{Text: "Начать квиз", Unique: "start_quiz"}
+	BtnStartQuiz = tele.Btn{Text: "Начать квиз🚀", Unique: "start_quiz"}
 	BtnResults   = tele.Btn{Text: "Мои результаты", Unique: "results"}
 
 	BtnNewLvl = tele.Btn{Text: "Дальше➡️", Unique: "new_lvl"}
 
-	BtnStartFirstLevel  = tele.Btn{Text: "Начать", Unique: "start_first_lvl"}
-	BtnStartSecondLevel = tele.Btn{Text: "Начать", Unique: "start_second_lvl"}
-	BtnStartThirdLevel  = tele.Btn{Text: "Начать", Unique: "start_third_lvl"}
+	BtnStartFirstLevel  = tele.Btn{Text: "Начать🚀", Unique: "start_first_lvl"}
+	BtnStartSecondLevel = tele.Btn{Text: "Начать🚀", Unique: "start_second_lvl"}
+	BtnStartThirdLevel  = tele.Btn{Text: "Начать🚀", Unique: "start_third_lvl"}
 
 	BtnBackToMenu = tele.Btn{Text: "⬅️Меню", Unique: "menu"}
 

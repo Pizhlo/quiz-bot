@@ -3,6 +3,8 @@ package model
 import (
 	"fmt"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Result struct {
@@ -13,21 +15,18 @@ type Result struct {
 	Date         time.Time
 }
 
-// SaveAnswers сохраняет количество правильных вопросов за раунд
-func (s *Result) SaveAnswers(lvl int, result int) {
+func (s *Result) InitRigthAnswers(user int64) {
 	if s.RigthAnswers == nil {
+		logrus.Debugf("Result: making new map of rigth answers")
 		s.RigthAnswers = make(map[int]int)
 
 		s.RigthAnswers[FirstLevel] = 0
 		s.RigthAnswers[SecondLevel] = 0
 		s.RigthAnswers[ThirdLevel] = 0
 	}
-
-	s.RigthAnswers[lvl] = result
 }
 
-// SaveTotalAnswers сохраняет общее количество вопросов за раунд
-func (s *Result) SaveTotalAnswers(lvl int, result int) {
+func (s *Result) InitTotalAnswers(user int64) {
 	if s.TotalAnswers == nil {
 		s.TotalAnswers = make(map[int]int)
 
@@ -35,8 +34,26 @@ func (s *Result) SaveTotalAnswers(lvl int, result int) {
 		s.TotalAnswers[SecondLevel] = 0
 		s.TotalAnswers[ThirdLevel] = 0
 	}
+}
 
-	s.TotalAnswers[lvl] = result
+// SaveAnswers сохраняет количество правильных вопросов за раунд
+func (s *Result) SaveAnswers(userID int64, lvl int, result int) {
+	if s.RigthAnswers != nil {
+		s.RigthAnswers[lvl] = result
+	} else {
+		s.InitRigthAnswers(userID)
+	}
+
+}
+
+// SaveTotalAnswers сохраняет общее количество вопросов за раунд
+func (s *Result) SaveTotalAnswers(userID int64, lvl int, result int) {
+	if s.TotalAnswers != nil {
+		s.TotalAnswers[lvl] = result
+	} else {
+		s.InitTotalAnswers(userID)
+	}
+
 }
 
 func (s *Result) Valid() error {
