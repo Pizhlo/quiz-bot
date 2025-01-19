@@ -31,7 +31,10 @@ func (c *Controller) SimpleAnswer(telectx telebot.Context) error {
 	return telectx.EditOrSend(msg, view.Next())
 }
 
-func (c *Controller) Answer(telectx telebot.Context) error {
+// MultipleAnswer обрабатывает нажатие на ответ в вопросе со множественным ответом.
+// Метод просто сохраняет ответ пользователя в список, но остается на текущем вопросе, пока
+// пользователь сам не отправит свой ответ
+func (c *Controller) MultipleAnswer(telectx telebot.Context) error {
 	// сохраняем ответ в список
 	err := c.questionSrv.AddAnswer(telectx.Chat().ID, telectx.Data())
 	if err != nil {

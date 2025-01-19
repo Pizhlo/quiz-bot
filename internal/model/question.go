@@ -9,6 +9,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	FirstLevel = iota
+	SecondLevel
+	ThirdLevel
+)
+
 type Question struct {
 	Text    string   `json:"question"`
 	Answers []string `json:"answers"`
@@ -37,6 +43,10 @@ func (s *SimpleQuestion) SetUserAnswer(user int64, answer string) {
 	s.UserAnswer[user] = answer
 }
 
+func (s *SimpleQuestion) Reset(userID int64) {
+	delete(s.UserAnswer, userID)
+}
+
 func (s *SimpleQuestion) Valid(answer string) bool {
 	return strings.EqualFold(s.RigthAnswer, answer)
 }
@@ -56,6 +66,10 @@ func (s *HardQuestion) AddUserAnswer(user int64, answer string) {
 	logrus.Debugf("Added user's answer. User: %+v. Answer: %+v", user, answer)
 
 	s.UserAnswers[user] = append(s.UserAnswers[user], answer)
+}
+
+func (s *HardQuestion) Reset(user int64) {
+	delete(s.UserAnswers, user)
 }
 
 func (s *HardQuestion) Valid(userID int64) bool {

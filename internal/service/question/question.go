@@ -30,11 +30,11 @@ func (s *Question) CurrentQuestion(userID int64) (*model.Question, error) {
 	}
 
 	switch state.level {
-	case firstLevel:
+	case model.FirstLevel:
 		return &s.firstLevel[state.question].Question, nil
-	case secondLevel:
+	case model.SecondLevel:
 		return &s.secondLevel[state.question].Question, nil
-	case thirdLevel:
+	case model.ThirdLevel:
 		return &s.thirdLevel[state.question].Question, nil
 	default:
 		return nil, fmt.Errorf("invalid level for simple question: %+v", state.level)

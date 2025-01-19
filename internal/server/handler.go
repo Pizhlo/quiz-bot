@@ -49,7 +49,7 @@ func (s *Server) buttonHandlers(ctx context.Context) {
 	})
 
 	s.bot.Handle(&view.BtnBackToMenu, func(ctx telebot.Context) error {
-		err := ctx.EditOrSend(message.StartMessage, view.MainMenu())
+		err := s.controller.Reset(ctx)
 		if err != nil {
 			s.controller.HandleError(ctx, err)
 		}
@@ -96,7 +96,7 @@ func (s *Server) buttonHandlers(ctx context.Context) {
 	})
 
 	s.bot.Handle(&view.BtnAnswer, func(ctx telebot.Context) error {
-		err := s.controller.Answer(ctx)
+		err := s.controller.MultipleAnswer(ctx)
 		if err != nil {
 			s.controller.HandleError(ctx, err)
 		}

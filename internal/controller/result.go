@@ -78,3 +78,10 @@ func (c *Controller) levelResuls(telectx telebot.Context) error {
 
 	return telectx.EditOrSend(msg, view.NewLvl())
 }
+
+// Reset сбрасывает все сохраненные данные. Используется, если пользователь ушел в главное меню
+func (c *Controller) Reset(telectx telebot.Context) error {
+	c.questionSrv.Reset(telectx.Chat().ID)
+
+	return telectx.EditOrSend(message.StartMessage, view.MainMenu())
+}

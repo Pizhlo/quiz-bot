@@ -41,13 +41,13 @@ func (s *Question) Message(userID int64) (string, error) {
 	curIdx := state.question + 1
 
 	switch state.level {
-	case firstLevel:
+	case model.FirstLevel:
 		question := s.firstLevel[state.question]
 		return question.QuestionText(curIdx, state.maxQuestions), nil
-	case secondLevel:
+	case model.SecondLevel:
 		question := s.secondLevel[state.question]
 		return question.QuestionText(curIdx, state.maxQuestions), nil
-	case thirdLevel:
+	case model.ThirdLevel:
 		question := s.thirdLevel[state.question]
 		return question.QuestionText(curIdx, state.maxQuestions), nil
 	default:
@@ -71,4 +71,21 @@ func (s *Question) SetNext(userID int64) error {
 	s.saveState(userID, state)
 
 	return nil
+}
+
+// Reset стирает все сохраненные данные
+func (s *Question) Reset(userID int64) {
+	delete(s.users, userID)
+
+	for _, q := range s.firstLevel {
+		q.Reset(userID)
+	}
+
+	for _, q := range s.secondLevel {
+		q.Reset(userID)
+	}
+
+	for _, q := range s.thirdLevel {
+		q.Reset(userID)
+	}
 }
