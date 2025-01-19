@@ -1,6 +1,7 @@
 package question
 
 import (
+	"context"
 	"fmt"
 	"quiz-mod/internal/model"
 	"time"
@@ -121,7 +122,37 @@ func (s *Question) Results(userID int64) (model.Result, error) {
 
 	res := state.result
 
+	return res, nil
+}
+
+// StopTimer записывает, сколько длилась викторина
+func (s *Question) StopTimer(userID int64) error {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return err
+	}
+
+	res := state.result
+
 	res.Duration = time.Since(state.startTime)
 
-	return res, nil
+	res.Date = time.Now()
+
+	state.result = res
+
+	s.saveState(userID, state)
+
+	return nil
+}
+
+// SaveResults сохраняет результаты в БД
+func (s *Question) SaveResults(ctx context.Context, userID int64) error {
+	res, err := s.Results(userID)
+	if err != nil {
+		return err
+	}
+
+	res.TgID = userID
+
+	return s.storage.SaveResults(ctx, res)
 }

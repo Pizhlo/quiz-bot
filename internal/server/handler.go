@@ -122,10 +122,10 @@ func (s *Server) buttonHandlers(ctx context.Context) {
 		return nil
 	})
 
-	s.bot.Handle(&view.BtnNewLvl, func(ctx telebot.Context) error {
-		err := s.controller.SendLevelMessage(ctx)
+	s.bot.Handle(&view.BtnNewLvl, func(telectx telebot.Context) error {
+		err := s.controller.SendLevelMessage(ctx, telectx)
 		if err != nil {
-			s.controller.HandleError(ctx, err)
+			s.controller.HandleError(telectx, err)
 		}
 
 		return nil

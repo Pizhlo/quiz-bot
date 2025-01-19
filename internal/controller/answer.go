@@ -2,7 +2,6 @@ package controller
 
 import (
 	"fmt"
-	"quiz-mod/internal/message"
 	"quiz-mod/internal/view"
 	"strings"
 
@@ -114,90 +113,6 @@ func (c *Controller) SendAnswer(telectx telebot.Context) error {
 	msg := fmt.Sprintf("%s\n\nТвой ответ: %s\nПравильный ответ: %+v", text, userAnsString, answers)
 
 	return telectx.EditOrSend(msg, view.Next())
-}
-
-func (c *Controller) Next(telectx telebot.Context) error {
-	last, err := c.questionSrv.IsQuestionLast(telectx.Chat().ID)
-	if err != nil {
-		return err
-	}
-
-	// если вопрос не последний - отправляем следующий вопрос
-	if !last {
-		c.questionSrv.SetNext(telectx.Chat().ID)
-
-		return c.sendCurrentQuestion(telectx)
-	}
-
-	// отправляем сообщение с результатами раунда
-	return c.levelResuls(telectx)
-}
-
-// sendLevelMessage отправляет сообщение с описанием уровня
-func (c *Controller) SendLevelMessage(telectx telebot.Context) error {
-	lvl, err := c.questionSrv.CurrentLevel(telectx.Chat().ID)
-	if err != nil {
-		return err
-	}
-
-	switch lvl {
-	case 0:
-		c.questionSrv.SetNext(telectx.Chat().ID)
-		return telectx.EditOrSend(message.SecondLvlMessage, view.StartSecondLevel())
-	case 1:
-		c.questionSrv.SetNext(telectx.Chat().ID)
-		return telectx.EditOrSend(message.ThirdLvlMessage, view.StartThirdLevel())
-	case 2:
-		return c.results(telectx)
-	default:
-		return fmt.Errorf("unknown lvl: %+v", lvl)
-	}
-}
-
-func (c *Controller) levelResuls(telectx telebot.Context) error {
-	rigthAns, err := c.questionSrv.LevelResults(telectx.Chat().ID)
-	if err != nil {
-		return err
-	}
-
-	questionsNum, err := c.questionSrv.QuestionNum(telectx.Chat().ID)
-	if err != nil {
-		return err
-	}
-
-	msg := fmt.Sprintf(message.LevelEnd, rigthAns, questionsNum)
-
-	return telectx.EditOrSend(msg, view.NewLvl())
-}
-
-func (c *Controller) results(telectx telebot.Context) error {
-	res, err := c.questionSrv.Results(telectx.Chat().ID)
-	if err != nil {
-		return err
-	}
-
-	duration := res.Duration.String()
-
-	result := fmt.Sprintf(message.Result, res.RigthAnswers[0], len(c.cfg.FirstLevel),
-		res.RigthAnswers[1], len(c.cfg.SecondLevel),
-		res.RigthAnswers[2], len(c.cfg.ThirdLevel),
-		duration)
-
-	msg := fmt.Sprintf(message.ResultMessage, result)
-
-	err = telectx.EditOrSend(msg, view.BackToMenu())
-	if err != nil {
-		return err
-	}
-
-	return c.sendResultsToChan(telectx.Chat().Username, result)
-}
-
-func (c *Controller) sendResultsToChan(username, result string) error {
-	msg := fmt.Sprintf(message.ChannelResultMessage, username, result)
-
-	_, err := c.bot.Send(&telebot.Chat{ID: int64(c.channelID)}, msg)
-	return err
 }
 
 func (c *Controller) OnText(telectx telebot.Context) error {

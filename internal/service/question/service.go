@@ -1,6 +1,7 @@
 package question
 
 import (
+	"context"
 	"fmt"
 	"quiz-mod/internal/config"
 	"quiz-mod/internal/model"
@@ -13,14 +14,21 @@ type Question struct {
 	thirdLevel  []model.SimpleQuestion
 
 	users map[int64]userState // для хранения состояний пользователей
+
+	storage storage
 }
 
-func New(cfg *config.Config) *Question {
+type storage interface {
+	SaveResults(rctx context.Context, es model.Result) error
+}
+
+func New(cfg *config.Config, storage storage) *Question {
 	return &Question{
 		firstLevel:  cfg.FirstLevel,
 		secondLevel: cfg.SecondLevel,
 		thirdLevel:  cfg.ThirdLevel,
 		users:       make(map[int64]userState),
+		storage:     storage,
 	}
 }
 
