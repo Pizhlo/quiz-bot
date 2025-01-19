@@ -19,7 +19,11 @@ type Question struct {
 }
 
 type storage interface {
-	SaveResults(rctx context.Context, es model.Result) error
+	// SaveResults сохраняет результат викторины в БД
+	SaveResults(ctx context.Context, res model.Result) error
+
+	// AllResults возвращает все результаты викторин пользователя
+	AllResults(ctx context.Context, userID int64) ([]model.Result, error)
 }
 
 func New(cfg *config.Config, storage storage) *Question {

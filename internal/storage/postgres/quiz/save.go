@@ -19,7 +19,7 @@ func (db *quizRepo) SaveResults(ctx context.Context, res model.Result) error {
 		res.RigthAnswers[0], res.TotalAnswers[0],
 		res.RigthAnswers[1], res.TotalAnswers[1],
 		res.RigthAnswers[2], res.TotalAnswers[2],
-		res.Duration, res.Date)
+		res.Seconds, res.Date)
 	if err != nil {
 		_ = db.rollback()
 		return err

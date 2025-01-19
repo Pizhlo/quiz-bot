@@ -21,6 +21,7 @@ func (s *Question) StartFirstLvl(userID int64) {
 
 	state := userState{
 		level:        model.FirstLevel,
+		rigthAnswers: 0,
 		maxQuestions: len(s.firstLevel),
 		question:     0,
 		startTime:    time.Now(),
@@ -47,6 +48,7 @@ func (s *Question) StartSecondLvl(userID int64) error {
 	state.level = model.SecondLevel
 	state.maxQuestions = len(s.secondLevel)
 	state.question = 0
+	state.rigthAnswers = 0
 
 	s.saveState(userID, state)
 
@@ -66,6 +68,7 @@ func (s *Question) StartThirdLvl(userID int64) error {
 	state.level = model.ThirdLevel
 	state.maxQuestions = len(s.thirdLevel)
 	state.question = 0
+	state.rigthAnswers = 0
 
 	s.saveState(userID, state)
 

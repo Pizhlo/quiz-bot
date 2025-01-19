@@ -140,6 +140,8 @@ func (s *Question) StopTimer(userID int64) error {
 
 	res.Duration = time.Since(state.startTime)
 
+	res.Seconds = res.Duration.Seconds()
+
 	res.Date = time.Now()
 
 	state.result = res

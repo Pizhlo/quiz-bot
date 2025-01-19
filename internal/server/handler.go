@@ -39,10 +39,20 @@ func (s *Server) commandHandlers() {
 }
 
 func (s *Server) buttonHandlers(ctx context.Context) {
+	// main menu
 	s.bot.Handle(&view.BtnStartQuiz, func(ctx telebot.Context) error {
 		err := ctx.EditOrSend(message.FirstLvlMessage, view.StartFirstLevel())
 		if err != nil {
 			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
+	})
+
+	s.bot.Handle(&view.BtnResults, func(telectx telebot.Context) error {
+		err := s.controller.ResultsByUserID(ctx, telectx)
+		if err != nil {
+			s.controller.HandleError(telectx, err)
 		}
 
 		return nil

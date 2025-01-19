@@ -9,9 +9,10 @@ import (
 
 type Result struct {
 	TgID         int64
-	Duration     time.Duration
-	RigthAnswers map[int]int // количество правильных ответов пользователя по раундам
-	TotalAnswers map[int]int // всего вопросов в раунде
+	Duration     time.Duration // чтобы засекать время
+	Seconds      float64       // для выгрузки из БД
+	RigthAnswers map[int]int   // количество правильных ответов пользователя по раундам
+	TotalAnswers map[int]int   // всего вопросов в раунде
 	Date         time.Time
 }
 

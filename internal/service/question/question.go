@@ -1,8 +1,10 @@
 package question
 
 import (
+	"context"
 	"fmt"
 	"quiz-mod/internal/model"
+	"quiz-mod/internal/view"
 )
 
 func (s *Question) IsQuestionLast(userID int64) (bool, error) {
@@ -39,4 +41,15 @@ func (s *Question) CurrentQuestion(userID int64) (*model.Question, error) {
 	default:
 		return nil, fmt.Errorf("invalid level for simple question: %+v", state.level)
 	}
+}
+
+func (s *Question) AllResults(ctx context.Context, userID int64) (string, error) {
+	results, err := s.storage.AllResults(ctx, userID)
+	if err != nil {
+		return "", err
+	}
+
+	view := view.NewResult()
+
+	return view.Message(results), nil
 }

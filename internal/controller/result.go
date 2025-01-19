@@ -2,9 +2,11 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"quiz-mod/internal/message"
 	"quiz-mod/internal/model"
+	"quiz-mod/internal/storage/postgres/quiz"
 	"quiz-mod/internal/view"
 
 	"gopkg.in/telebot.v3"
@@ -51,7 +53,7 @@ func (c *Controller) resultMsg(res model.Result) string {
 	return fmt.Sprintf(message.Result, res.RigthAnswers[0], len(c.cfg.FirstLevel),
 		res.RigthAnswers[1], len(c.cfg.SecondLevel),
 		res.RigthAnswers[2], len(c.cfg.ThirdLevel),
-		res.Duration.String())
+		fmt.Sprintf("%.2fs", res.Seconds))
 }
 
 func (c *Controller) sendResultsToChan(username string, res model.Result) error {
@@ -84,4 +86,19 @@ func (c *Controller) Reset(telectx telebot.Context) error {
 	c.questionSrv.Reset(telectx.Chat().ID)
 
 	return telectx.EditOrSend(message.StartMessage, view.MainMenu())
+}
+
+// ResultsByUserID обрабатывает нажатие на кнопку "Мои результаты".
+// Достает из БД все результаты викторин пользователя и отправляет сообщение
+func (c *Controller) ResultsByUserID(ctx context.Context, telectx telebot.Context) error {
+	msg, err := c.questionSrv.AllResults(ctx, telectx.Chat().ID)
+	if err != nil {
+		if errors.Is(err, quiz.ErrNoResults) {
+			return telectx.EditOrSend(message.NoResultsMessage, view.BackToMenu())
+		}
+
+		return err
+	}
+
+	return telectx.EditOrSend(msg, view.BackToMenu())
 }

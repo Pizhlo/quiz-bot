@@ -49,6 +49,8 @@ func (c *Controller) HandleError(ctx tele.Context, err error) {
 		logrus.Errorf("Error while sending error message to user. Error: %+v\n", editErr)
 	}
 
+	logrus.Debug(msg)
+
 	_, channelErr := c.bot.Send(&tele.Chat{ID: int64(c.channelID)}, msg)
 	if channelErr != nil {
 		logrus.Errorf("Error while sending error message to channel. Error: %+v\n", channelErr)
