@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"quiz-mod/internal/config"
 	"quiz-mod/internal/model"
+	"quiz-mod/internal/view"
 )
 
 // сервис, управляющий вопросами
@@ -14,6 +15,8 @@ type Question struct {
 	thirdLevel  []model.SimpleQuestion
 
 	users map[int64]userState // для хранения состояний пользователей
+
+	views map[int64]*view.ResultView // мапа с вьюхами
 
 	storage storage
 }
@@ -33,6 +36,7 @@ func New(cfg *config.Config, storage storage) *Question {
 		thirdLevel:  cfg.ThirdLevel,
 		users:       make(map[int64]userState),
 		storage:     storage,
+		views:       make(map[int64]*view.ResultView),
 	}
 }
 

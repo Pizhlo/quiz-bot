@@ -22,7 +22,8 @@ func (db *quizRepo) AllResults(ctx context.Context, userID int64) ([]model.Resul
 		second_lvl, total_second_lvl, 
 		third_lvl, total_third_lvl, 
 		duration, date	
-		from quizzes.results where tg_id = $1`, userID)
+		from quizzes.results where tg_id = $1
+		order by date`, userID)
 	if err != nil {
 		return nil, err
 	}

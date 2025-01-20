@@ -91,7 +91,7 @@ func (c *Controller) Reset(telectx telebot.Context) error {
 // ResultsByUserID обрабатывает нажатие на кнопку "Мои результаты".
 // Достает из БД все результаты викторин пользователя и отправляет сообщение
 func (c *Controller) ResultsByUserID(ctx context.Context, telectx telebot.Context) error {
-	msg, err := c.questionSrv.AllResults(ctx, telectx.Chat().ID)
+	msg, kb, err := c.questionSrv.AllResults(ctx, telectx.Chat().ID)
 	if err != nil {
 		if errors.Is(err, quiz.ErrNoResults) {
 			return telectx.EditOrSend(message.NoResultsMessage, view.BackToMenu())
@@ -100,5 +100,5 @@ func (c *Controller) ResultsByUserID(ctx context.Context, telectx telebot.Contex
 		return err
 	}
 
-	return telectx.EditOrSend(msg, view.BackToMenu())
+	return telectx.EditOrSend(msg, kb)
 }

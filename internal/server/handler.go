@@ -140,4 +140,42 @@ func (s *Server) buttonHandlers(ctx context.Context) {
 
 		return nil
 	})
+
+	// pages
+
+	s.bot.Handle(&view.BtnPrevPgResults, func(telectx telebot.Context) error {
+		err := s.controller.PrevPage(telectx)
+		if err != nil {
+			s.controller.HandleError(telectx, err)
+		}
+
+		return nil
+	})
+
+	s.bot.Handle(&view.BtnNextPgResults, func(telectx telebot.Context) error {
+		err := s.controller.NextPage(telectx)
+		if err != nil {
+			s.controller.HandleError(telectx, err)
+		}
+
+		return nil
+	})
+
+	s.bot.Handle(&view.BtnFirstPgResults, func(telectx telebot.Context) error {
+		err := s.controller.FirstPage(telectx)
+		if err != nil {
+			s.controller.HandleError(telectx, err)
+		}
+
+		return nil
+	})
+
+	s.bot.Handle(&view.BtnLastPgResults, func(telectx telebot.Context) error {
+		err := s.controller.LastPage(telectx)
+		if err != nil {
+			s.controller.HandleError(telectx, err)
+		}
+
+		return nil
+	})
 }

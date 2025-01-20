@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"quiz-mod/internal/model"
 	"quiz-mod/internal/view"
+
+	"gopkg.in/telebot.v3"
 )
 
 func (s *Question) IsQuestionLast(userID int64) (bool, error) {
@@ -43,13 +45,17 @@ func (s *Question) CurrentQuestion(userID int64) (*model.Question, error) {
 	}
 }
 
-func (s *Question) AllResults(ctx context.Context, userID int64) (string, error) {
+func (s *Question) AllResults(ctx context.Context, userID int64) (string, *telebot.ReplyMarkup, error) {
 	results, err := s.storage.AllResults(ctx, userID)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	view := view.NewResult()
 
-	return view.Message(results), nil
+	s.views[userID] = view
+
+	kb := view.Keyboard()
+
+	return view.Message(results), kb, nil
 }
