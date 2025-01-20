@@ -2,6 +2,9 @@ package controller
 
 import (
 	"context"
+	"fmt"
+	"quiz-mod/internal/message"
+	"quiz-mod/internal/view"
 
 	"gopkg.in/telebot.v3"
 )
@@ -31,4 +34,42 @@ func (c *Controller) StartThirdLevel(ctx context.Context, telectx telebot.Contex
 	}
 
 	return c.sendCurrentQuestion(telectx)
+}
+
+func (c *Controller) Next(telectx telebot.Context) error {
+	last, err := c.questionSrv.IsQuestionLast(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	// если вопрос не последний - отправляем следующий вопрос
+	if !last {
+		c.questionSrv.SetNext(telectx.Chat().ID)
+
+		return c.sendCurrentQuestion(telectx)
+	}
+
+	// отправляем сообщение с результатами раунда
+	return c.levelResuls(telectx)
+}
+
+// sendLevelMessage отправляет сообщение с описанием уровня
+func (c *Controller) SendLevelMessage(ctx context.Context, telectx telebot.Context) error {
+	lvl, err := c.questionSrv.CurrentLevel(telectx.Chat().ID)
+	if err != nil {
+		return err
+	}
+
+	switch lvl {
+	case 0:
+		c.questionSrv.SetNext(telectx.Chat().ID)
+		return telectx.EditOrSend(message.SecondLvlMessage, view.StartSecondLevel())
+	case 1:
+		c.questionSrv.SetNext(telectx.Chat().ID)
+		return telectx.EditOrSend(message.ThirdLvlMessage, view.StartThirdLevel())
+	case 2:
+		return c.results(ctx, telectx)
+	default:
+		return fmt.Errorf("unknown lvl: %+v", lvl)
+	}
 }

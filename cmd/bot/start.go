@@ -2,12 +2,14 @@ package bot
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"quiz-mod/internal/config"
 	"quiz-mod/internal/controller"
 	"quiz-mod/internal/server"
 	"quiz-mod/internal/service/question"
+	storage "quiz-mod/internal/storage/postgres/quiz"
 	"strconv"
 	"sync"
 	"syscall"
@@ -92,7 +94,41 @@ func Start(envFile, confName, path string) {
 
 	logrus.Info("successfully created bot")
 
-	questionSrv := question.New(cfg)
+	dbUser := os.Getenv("POSTGRES_USER")
+	if len(dbUser) == 0 {
+		logrus.Fatalf("POSTGRES_USER not set")
+	}
+
+	dbPass := os.Getenv("POSTGRES_PASSWORD")
+	if len(dbPass) == 0 {
+		logrus.Fatalf("POSTGRES_PASSWORD not set")
+	}
+
+	dbName := os.Getenv("POSTGRES_DB")
+	if len(dbName) == 0 {
+		logrus.Fatalf("POSTGRES_DB not set")
+	}
+
+	dbHost := os.Getenv("POSTGRES_HOST")
+	if len(dbHost) == 0 {
+		logrus.Fatalf("POSTGRES_HOST not set")
+	}
+
+	dbPort := os.Getenv("POSTGRES_PORT")
+	if len(dbPort) == 0 {
+		logrus.Fatalf("POSTGRES_PORT not set")
+	}
+
+	dbAddr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", dbUser, dbPass, dbHost, dbPort, dbName)
+
+	logrus.Infof("connecting db: %s", dbAddr)
+
+	storage, err := storage.New(dbAddr)
+	if err != nil {
+		logrus.Fatalf("failed to connect db: %+v", err)
+	}
+
+	questionSrv := question.New(cfg, storage)
 
 	controller := controller.New(bot, channelID, cfg, questionSrv)
 
@@ -133,6 +169,8 @@ func Start(envFile, confName, path string) {
 		logrus.Info("gently shutdown")
 
 		bot.Stop()
+
+		storage.Close()
 
 	}(&wg)
 

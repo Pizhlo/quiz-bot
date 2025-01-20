@@ -6,12 +6,6 @@ import (
 	"time"
 )
 
-const (
-	firstLevel = iota
-	secondLevel
-	thirdLevel
-)
-
 type userState struct {
 	level        int // текущий уровень
 	question     int // текущий вопрос

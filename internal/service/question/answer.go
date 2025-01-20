@@ -1,9 +1,12 @@
 package question
 
 import (
+	"context"
 	"fmt"
 	"quiz-mod/internal/model"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 func (s *Question) SetAnswer(userID int64, answer string) error {
@@ -13,20 +16,22 @@ func (s *Question) SetAnswer(userID int64, answer string) error {
 	}
 
 	switch state.level {
-	case firstLevel:
+	case model.FirstLevel:
 		question := s.firstLevel[state.question]
 
 		if question.Valid(answer) {
 			state.rigthAnswers++
-			state.result.SaveAnswers(firstLevel, state.rigthAnswers)
+			logrus.Debugf("set answer first lvl")
+			state.result.SaveAnswers(userID, model.FirstLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
-	case thirdLevel:
+	case model.ThirdLevel:
 		question := s.thirdLevel[state.question]
 
 		if question.Valid(answer) {
 			state.rigthAnswers++
-			state.result.SaveAnswers(thirdLevel, state.rigthAnswers)
+			logrus.Debugf("set answer third lvl")
+			state.result.SaveAnswers(userID, model.ThirdLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	default:
@@ -43,13 +48,13 @@ func (s *Question) SaveAnswers(userID int64) error {
 	}
 
 	switch state.level {
-	case secondLevel:
+	case model.SecondLevel:
 		question := s.secondLevel[state.question]
 
 		if question.Valid(userID) {
 			state.rigthAnswers++
 
-			state.result.SaveAnswers(secondLevel, state.rigthAnswers)
+			state.result.SaveAnswers(userID, model.SecondLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	default:
@@ -66,7 +71,7 @@ func (s *Question) AddAnswer(userID int64, answer string) error {
 	}
 
 	switch state.level {
-	case secondLevel:
+	case model.SecondLevel:
 		question := s.secondLevel[state.question]
 
 		question.AddUserAnswer(userID, answer)
@@ -84,13 +89,13 @@ func (s *Question) RigthAnswer(userID int64) ([]string, error) {
 	}
 
 	switch state.level {
-	case firstLevel:
+	case model.FirstLevel:
 		question := s.firstLevel[state.question]
 		return []string{question.RigthAnswer}, nil
-	case secondLevel:
+	case model.SecondLevel:
 		question := s.secondLevel[state.question]
 		return question.RigthAnswers, nil
-	case thirdLevel:
+	case model.ThirdLevel:
 		question := s.thirdLevel[state.question]
 		return []string{question.RigthAnswer}, nil
 	default:
@@ -105,7 +110,7 @@ func (s *Question) UserAnswers(userID int64) ([]string, error) {
 	}
 
 	switch state.level {
-	case secondLevel:
+	case model.SecondLevel:
 		question := s.secondLevel[state.question]
 		return question.UserAnswers[userID], nil
 	default:
@@ -121,7 +126,44 @@ func (s *Question) Results(userID int64) (model.Result, error) {
 
 	res := state.result
 
+	return res, nil
+}
+
+// StopTimer записывает, сколько длилась викторина
+func (s *Question) StopTimer(userID int64) error {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return err
+	}
+
+	res := state.result
+
 	res.Duration = time.Since(state.startTime)
 
-	return res, nil
+	res.Seconds = res.Duration.Seconds()
+
+	res.Date = time.Now()
+
+	state.result = res
+
+	s.saveState(userID, state)
+
+	return nil
+}
+
+// SaveResults сохраняет результаты в БД
+func (s *Question) SaveResults(ctx context.Context, userID int64) error {
+	res, err := s.Results(userID)
+	if err != nil {
+		return err
+	}
+
+	res.TgID = userID
+
+	// проверяем результаты на валидность перед сохранением
+	err = res.Valid()
+	if err != nil {
+		return err
+	}
+	return s.storage.SaveResults(ctx, res)
 }
