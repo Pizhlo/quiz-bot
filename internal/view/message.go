@@ -10,7 +10,9 @@ import (
 )
 
 const (
-	dateFieldFormat = "02.01.2006 15:04:05"
+	dateFieldFormat    = "02.01.2006 15:04:05"
+	recordCountPerPage = 5
+	maxMessageLen      = 4096
 )
 
 type ResultView struct {
@@ -23,34 +25,45 @@ func NewResult() *ResultView {
 }
 
 func (s *ResultView) Message(results []model.Result) string {
-	page := "<b>Твои результаты:\n\n</b>"
+	s.pages = make([]string, 0)
 
-	for i, res := range results {
-		msg := ""
+	res := "<b>Твои результаты:</b>\n\n"
 
-		// seconds := time.Duration(res.Seconds) * time.Second
-		msg += fmt.Sprintf(message.Result,
-			res.RigthAnswers[model.FirstLevel],
-			res.TotalAnswers[model.FirstLevel],
-			res.RigthAnswers[model.SecondLevel],
-			res.TotalAnswers[model.SecondLevel],
-			res.RigthAnswers[model.ThirdLevel],
-			res.TotalAnswers[model.ThirdLevel],
-			// res.Duration.String(),
-			fmt.Sprintf("%.2fs", res.Seconds),
-			// seconds.String(),
-		)
+	for i, result := range results {
 
-		page += fmt.Sprintf("%s\n\nДата: %s", msg, res.Date.Format(dateFieldFormat))
+		txt := s.fillMsg(i+1, result)
 
-		if i%5 == 0 {
-			s.pages = append(s.pages, page)
-			page = ""
+		res += fmt.Sprintf("%s\n\n", txt)
+
+		if i%recordCountPerPage == 0 && i > 0 || len(res) == maxMessageLen {
+			s.pages = append(s.pages, res)
+			res = ""
 		}
-
 	}
 
+	if len(s.pages) < 5 && res != "" {
+		s.pages = append(s.pages, res)
+	}
+
+	s.currentPage = 0
+
 	return s.pages[0]
+}
+
+func (S *ResultView) fillMsg(idx int, result model.Result) string {
+	seconds := fmt.Sprintf("%.2fс", result.Seconds)
+
+	msg := fmt.Sprintf("<b> %d. Дата: %s</b>\n\n", idx, result.Date.Format(dateFieldFormat))
+
+	msg += fmt.Sprintf(message.Result,
+		result.RigthAnswers[model.FirstLevel], result.TotalAnswers[model.FirstLevel],
+		result.RigthAnswers[model.SecondLevel], result.TotalAnswers[model.SecondLevel],
+		result.RigthAnswers[model.ThirdLevel], result.TotalAnswers[model.ThirdLevel],
+		seconds,
+		// fmt.Sprintf("\n\n📅Дата: %s", result.Date.Format(dateFieldFormat)),
+	)
+
+	return msg
 }
 
 var (

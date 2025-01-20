@@ -6,12 +6,15 @@ import (
 	"gopkg.in/telebot.v3"
 )
 
+const htmlParseMode = "HTML"
+
 // NextPage обрабатывает кнопку переключения на следующую страницу
 func (c *Controller) NextPage(telectx telebot.Context) error {
 	msg, kb := c.questionSrv.NextPage(telectx.Chat().ID)
 
 	err := telectx.Edit(msg, &telebot.SendOptions{
 		ReplyMarkup: kb,
+		ParseMode:   htmlParseMode,
 	})
 
 	// если пришла ошибка о том, что сообщение не изменено - игнорируем.
@@ -30,6 +33,7 @@ func (c *Controller) PrevPage(telectx telebot.Context) error {
 
 	err := telectx.Edit(msg, &telebot.SendOptions{
 		ReplyMarkup: kb,
+		ParseMode:   htmlParseMode,
 	})
 
 	// если пришла ошибка о том, что сообщение не изменено - игнорируем.
@@ -48,6 +52,7 @@ func (c *Controller) LastPage(telectx telebot.Context) error {
 
 	err := telectx.Edit(msg, &telebot.SendOptions{
 		ReplyMarkup: kb,
+		ParseMode:   htmlParseMode,
 	})
 
 	// если пришла ошибка о том, что сообщение не изменено - игнорируем.
@@ -66,6 +71,7 @@ func (c *Controller) FirstPage(telectx telebot.Context) error {
 
 	err := telectx.Edit(msg, &telebot.SendOptions{
 		ReplyMarkup: kb,
+		ParseMode:   htmlParseMode,
 	})
 
 	// если пришла ошибка о том, что сообщение не изменено - игнорируем.

@@ -55,7 +55,5 @@ func (s *Question) AllResults(ctx context.Context, userID int64) (string, *teleb
 
 	s.views[userID] = view
 
-	kb := view.Keyboard()
-
-	return view.Message(results), kb, nil
+	return view.Message(results), view.Keyboard(), nil
 }

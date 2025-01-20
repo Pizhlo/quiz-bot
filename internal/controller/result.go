@@ -46,7 +46,7 @@ func (c *Controller) sendResultsToUser(telectx telebot.Context, res model.Result
 
 	msg := fmt.Sprintf(message.ResultMessage, result)
 
-	return telectx.EditOrSend(msg, view.BackToMenu())
+	return telectx.EditOrSend(msg, view.ResultMenu())
 }
 
 func (c *Controller) resultMsg(res model.Result) string {
