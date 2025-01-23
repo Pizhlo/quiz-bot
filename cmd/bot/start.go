@@ -9,6 +9,7 @@ import (
 	"quiz-mod/internal/controller"
 	"quiz-mod/internal/server"
 	"quiz-mod/internal/service/question"
+	"quiz-mod/internal/storage/minio"
 	storage "quiz-mod/internal/storage/postgres/quiz"
 	"strconv"
 	"sync"
@@ -128,7 +129,37 @@ func Start(envFile, confName, path string) {
 		logrus.Fatalf("failed to connect db: %+v", err)
 	}
 
-	questionSrv := question.New(cfg, storage)
+	minioEndpoint := os.Getenv("MINIO_ENDPOINT")
+	if len(dbPort) == 0 {
+		logrus.Fatalf("MINIO_ENDPOINT not set")
+	}
+
+	minioAccessKey := os.Getenv("MINIO_ACCESS_KEY")
+	if len(dbPort) == 0 {
+		logrus.Fatalf("MINIO_ACCESS_KEY not set")
+	}
+
+	minioSecretAccessKey := os.Getenv("SECRET_ACCESS_KEY")
+	if len(dbPort) == 0 {
+		logrus.Fatalf("SECRET_ACCESS_KEY not set")
+	}
+
+	minioUseSSLStr := os.Getenv("MINIO_USE_SSL")
+	if len(dbPort) == 0 {
+		logrus.Fatalf("MINIO_USE_SSL not set")
+	}
+
+	minioUSeSSL, err := strconv.ParseBool(minioUseSSLStr)
+	if err != nil {
+		logrus.Fatalf("error parsing string MINIO_USE_SSL '%s': %+v", minioUseSSLStr, err)
+	}
+
+	minio, err := minio.New(minioEndpoint, minioAccessKey, minioSecretAccessKey, minioUSeSSL)
+	if err != nil {
+		logrus.Fatalf("failed to connect minio: %+v", err)
+	}
+
+	questionSrv := question.New(cfg, storage, minio)
 
 	controller := controller.New(bot, channelID, cfg, questionSrv)
 

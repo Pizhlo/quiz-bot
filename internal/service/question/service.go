@@ -19,6 +19,11 @@ type Question struct {
 	views map[int64]*view.ResultView // мапа с вьюхами
 
 	storage storage
+	minio   minio
+}
+
+type minio interface {
+	Get(ctx context.Context, bucketName string, objectName string, filePath string) ([]byte, error)
 }
 
 type storage interface {
@@ -29,7 +34,7 @@ type storage interface {
 	AllResults(ctx context.Context, userID int64) ([]model.Result, error)
 }
 
-func New(cfg *config.Config, storage storage) *Question {
+func New(cfg *config.Config, storage storage, minio minio) *Question {
 	return &Question{
 		firstLevel:  cfg.FirstLevel,
 		secondLevel: cfg.SecondLevel,
@@ -37,6 +42,7 @@ func New(cfg *config.Config, storage storage) *Question {
 		users:       make(map[int64]userState),
 		storage:     storage,
 		views:       make(map[int64]*view.ResultView),
+		minio:       minio,
 	}
 }
 
@@ -96,4 +102,12 @@ func (s *Question) Reset(userID int64) {
 	for _, q := range s.thirdLevel {
 		q.Reset(userID)
 	}
+}
+
+func (s *Question) GetPics(ctx context.Context) ([]byte, error) {
+	bucketName := "test"
+	objectName := "photo_2023-08-25_11-14-40.jpg"
+	filePath := "/pics/photo_2023-08-25_11-14-40.jpg"
+
+	return s.minio.Get(ctx, bucketName, objectName, filePath)
 }

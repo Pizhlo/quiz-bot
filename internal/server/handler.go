@@ -9,7 +9,7 @@ import (
 	"gopkg.in/telebot.v3"
 )
 
-func (s *Server) commandHandlers() {
+func (s *Server) commandHandlers(ctx context.Context) {
 	s.bot.Handle(command.Start, func(ctx telebot.Context) error {
 		err := ctx.EditOrSend(message.StartMessage, view.MainMenu())
 		if err != nil {
@@ -32,6 +32,15 @@ func (s *Server) commandHandlers() {
 		err := s.controller.OnText(ctx)
 		if err != nil {
 			s.controller.HandleError(ctx, err)
+		}
+
+		return nil
+	})
+
+	s.bot.Handle(command.Get, func(telectx telebot.Context) error {
+		err := s.controller.Get(ctx, telectx)
+		if err != nil {
+			s.controller.HandleError(telectx, err)
 		}
 
 		return nil
