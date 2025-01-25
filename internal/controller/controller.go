@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"quiz-mod/internal/config"
 	"quiz-mod/internal/message"
 	"quiz-mod/internal/service/question"
@@ -60,12 +60,17 @@ func (c *Controller) HandleError(ctx tele.Context, err error) {
 }
 
 func (c *Controller) Get(ctx context.Context, telectx tele.Context) error {
-	data, err := c.questionSrv.GetPics(ctx)
+	path, err := c.questionSrv.GetPics(ctx)
 	if err != nil {
 		return err
 	}
 
-	photo := &tele.Photo{File: tele.FromReader(bytes.NewReader(data))}
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+
+	photo := &tele.Photo{File: tele.FromReader(file)}
 
 	_, err = photo.Send(c.bot, telectx.Chat(), nil)
 	return err

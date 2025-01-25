@@ -23,7 +23,8 @@ type Question struct {
 }
 
 type minio interface {
-	Get(ctx context.Context, bucketName string, objectName string, filePath string) ([]byte, error)
+	// Get получает файл из minio и сохраняет по пути filepath/objectName
+	Get(ctx context.Context, objectName string, filePath string) error
 }
 
 type storage interface {
@@ -104,10 +105,10 @@ func (s *Question) Reset(userID int64) {
 	}
 }
 
-func (s *Question) GetPics(ctx context.Context) ([]byte, error) {
-	bucketName := "test"
+// GetPics делает запрос в minio и возвращает путь до сохраненного файла
+func (s *Question) GetPics(ctx context.Context) (string, error) {
 	objectName := "photo_2023-08-25_11-14-40.jpg"
-	filePath := "/pics/photo_2023-08-25_11-14-40.jpg"
+	filePath := "pics"
 
-	return s.minio.Get(ctx, bucketName, objectName, filePath)
+	return fmt.Sprintf("%s/%s", filePath, objectName), s.minio.Get(ctx, objectName, filePath)
 }

@@ -2,6 +2,7 @@ package minio
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -10,9 +11,10 @@ import (
 
 type minioRepo struct {
 	client *minio.Client
+	bucket string
 }
 
-func New(endpoint, accessKey, secretAccessKey string, useSSL bool) (*minioRepo, error) {
+func New(endpoint, accessKey, secretAccessKey string, useSSL bool, bucket string) (*minioRepo, error) {
 	client, err := minio.New(endpoint, &minio.Options{
 
 		Creds:  credentials.NewStaticV4(accessKey, secretAccessKey, ""),
@@ -25,28 +27,21 @@ func New(endpoint, accessKey, secretAccessKey string, useSSL bool) (*minioRepo, 
 
 	repo := &minioRepo{
 		client: client,
+		bucket: bucket,
 	}
 
 	return repo, nil
 }
 
-func (db *minioRepo) Get(ctx context.Context, bucketName string, objectName string, filePath string) ([]byte, error) {
-	logrus.Debugf("trying to load file from Minio. Bucket: %s. Object: %s. Filepath: %s", bucketName, objectName, filePath)
+func (db *minioRepo) Get(ctx context.Context, objectName string, filePath string) error {
+	logrus.Debugf("trying to load file from Minio. Bucket: %s. Object: %s. Filepath: %s", db.bucket, objectName, filePath)
 
-	// Retrieve the file from MinIO
-	object, err := db.client.GetObject(ctx, bucketName, filePath, minio.GetObjectOptions{})
+	filePath = fmt.Sprintf("%s/%s", filePath, objectName)
+
+	err := db.client.FGetObject(ctx, db.bucket, filePath, filePath, minio.GetObjectOptions{})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	data := []byte{}
-
-	n, err := object.Read(data)
-	if err != nil {
-		return nil, err
-	}
-
-	logrus.Debugf("loaded %d byte(s)", n)
-
-	return data, nil
+	return nil
 }

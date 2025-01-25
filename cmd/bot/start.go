@@ -154,7 +154,12 @@ func Start(envFile, confName, path string) {
 		logrus.Fatalf("error parsing string MINIO_USE_SSL '%s': %+v", minioUseSSLStr, err)
 	}
 
-	minio, err := minio.New(minioEndpoint, minioAccessKey, minioSecretAccessKey, minioUSeSSL)
+	bucket := os.Getenv("MINIO_BUCKET")
+	if len(bucket) == 0 {
+		logrus.Fatalf("MINIO_BUCKET not set")
+	}
+
+	minio, err := minio.New(minioEndpoint, minioAccessKey, minioSecretAccessKey, minioUSeSSL, bucket)
 	if err != nil {
 		logrus.Fatalf("failed to connect minio: %+v", err)
 	}
