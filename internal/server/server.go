@@ -21,7 +21,7 @@ func New(bot *tele.Bot, controller *controller.Controller) *Server {
 }
 
 func (s *Server) Start(ctx context.Context) {
-	s.commandHandlers(ctx)
+	s.commandHandlers()
 	s.buttonHandlers(ctx)
 
 	logrus.Info("server started")

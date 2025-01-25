@@ -2,7 +2,6 @@ package minio
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -33,10 +32,8 @@ func New(endpoint, accessKey, secretAccessKey string, useSSL bool, bucket string
 	return repo, nil
 }
 
-func (db *minioRepo) Get(ctx context.Context, objectName string, filePath string) error {
-	logrus.Debugf("trying to load file from Minio. Bucket: %s. Object: %s. Filepath: %s", db.bucket, objectName, filePath)
-
-	filePath = fmt.Sprintf("%s/%s", filePath, objectName)
+func (db *minioRepo) Get(ctx context.Context, filePath string) error {
+	logrus.Debugf("trying to load file from Minio. Bucket: %s. Filepath: %s", db.bucket, filePath)
 
 	err := db.client.FGetObject(ctx, db.bucket, filePath, filePath, minio.GetObjectOptions{})
 	if err != nil {

@@ -13,7 +13,7 @@ func (c *Controller) StartFirstLevel(ctx context.Context, telectx telebot.Contex
 	// начинаем первый уровень - выставляем номер уровня и вопроса
 	c.questionSrv.StartFirstLvl(telectx.Chat().ID)
 
-	return c.sendCurrentQuestion(telectx)
+	return c.sendCurrentQuestion(ctx, telectx)
 }
 
 func (c *Controller) StartSecondLevel(ctx context.Context, telectx telebot.Context) error {
@@ -23,7 +23,7 @@ func (c *Controller) StartSecondLevel(ctx context.Context, telectx telebot.Conte
 		return err
 	}
 
-	return c.sendCurrentQuestion(telectx)
+	return c.sendCurrentQuestion(ctx, telectx)
 }
 
 func (c *Controller) StartThirdLevel(ctx context.Context, telectx telebot.Context) error {
@@ -33,10 +33,10 @@ func (c *Controller) StartThirdLevel(ctx context.Context, telectx telebot.Contex
 		return err
 	}
 
-	return c.sendCurrentQuestion(telectx)
+	return c.sendCurrentQuestion(ctx, telectx)
 }
 
-func (c *Controller) Next(telectx telebot.Context) error {
+func (c *Controller) Next(ctx context.Context, telectx telebot.Context) error {
 	last, err := c.questionSrv.IsQuestionLast(telectx.Chat().ID)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (c *Controller) Next(telectx telebot.Context) error {
 	if !last {
 		c.questionSrv.SetNext(telectx.Chat().ID)
 
-		return c.sendCurrentQuestion(telectx)
+		return c.sendCurrentQuestion(ctx, telectx)
 	}
 
 	// отправляем сообщение с результатами раунда

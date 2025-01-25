@@ -1,9 +1,7 @@
 package controller
 
 import (
-	"context"
 	"fmt"
-	"os"
 	"quiz-mod/internal/config"
 	"quiz-mod/internal/message"
 	"quiz-mod/internal/service/question"
@@ -57,21 +55,4 @@ func (c *Controller) HandleError(ctx tele.Context, err error) {
 	if channelErr != nil {
 		logrus.Errorf("Error while sending error message to channel. Error: %+v\n", channelErr)
 	}
-}
-
-func (c *Controller) Get(ctx context.Context, telectx tele.Context) error {
-	path, err := c.questionSrv.GetPics(ctx)
-	if err != nil {
-		return err
-	}
-
-	file, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-
-	photo := &tele.Photo{File: tele.FromReader(file)}
-
-	_, err = photo.Send(c.bot, telectx.Chat(), nil)
-	return err
 }

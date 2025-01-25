@@ -18,6 +18,7 @@ const (
 type Question struct {
 	Text    string   `json:"question"`
 	Answers []string `json:"answers"`
+	Picture string   `json:"picture"`
 }
 
 func (q *Question) QuestionText(currIdx, maxIdx int) string {
