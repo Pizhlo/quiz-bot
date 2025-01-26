@@ -95,6 +95,15 @@ func (c *Controller) levelResuls(telectx telebot.Context) error {
 func (c *Controller) Reset(telectx telebot.Context) error {
 	c.questionSrv.Reset(telectx.Chat().ID)
 
+	if telectx.Message().Caption != "" {
+		err := telectx.Delete()
+		if err != nil {
+			logrus.Errorf("error deleting message: %+v", err)
+		}
+
+		return telectx.Send(message.StartMessage, view.MainMenu())
+	}
+
 	return telectx.EditOrSend(message.StartMessage, view.MainMenu())
 }
 
