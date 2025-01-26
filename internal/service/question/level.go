@@ -43,6 +43,7 @@ func (s *Question) StartSecondLvl(userID int64) error {
 		return err
 	}
 
+	// сохраняем общее количество вопросов на уровне
 	state.result.SaveTotalAnswers(userID, model.SecondLevel, len(s.secondLevel))
 
 	state.level = model.SecondLevel

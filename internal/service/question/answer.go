@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"quiz-bot/internal/model"
 	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
 func (s *Question) SetAnswer(userID int64, answer string) error {
@@ -21,8 +19,7 @@ func (s *Question) SetAnswer(userID int64, answer string) error {
 
 		if question.Valid(answer) {
 			state.rigthAnswers++
-			logrus.Debugf("set answer first lvl")
-			state.result.SaveAnswers(userID, model.FirstLevel, state.rigthAnswers)
+
 			s.saveState(userID, state)
 		}
 	case model.ThirdLevel:
@@ -30,13 +27,23 @@ func (s *Question) SetAnswer(userID int64, answer string) error {
 
 		if question.Valid(answer) {
 			state.rigthAnswers++
-			logrus.Debugf("set answer third lvl")
-			state.result.SaveAnswers(userID, model.ThirdLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	default:
 		return fmt.Errorf("invalid level for simple question: %+v", state.level)
 	}
+
+	return nil
+}
+
+// SaveLvlResults сохраняет количество правильных ответов за уровень в результат
+func (s *Question) SaveLvlResults(userID int64, lvl int) error {
+	state, err := s.stateByUser(userID)
+	if err != nil {
+		return err
+	}
+
+	state.result.SaveAnswers(userID, lvl, state.rigthAnswers)
 
 	return nil
 }
@@ -53,8 +60,6 @@ func (s *Question) SaveAnswers(userID int64) error {
 
 		if question.Valid(userID) {
 			state.rigthAnswers++
-
-			state.result.SaveAnswers(userID, model.SecondLevel, state.rigthAnswers)
 			s.saveState(userID, state)
 		}
 	default:
@@ -64,6 +69,7 @@ func (s *Question) SaveAnswers(userID int64) error {
 	return nil
 }
 
+// AddAnswer сохраняет список ответов пользователя на вопрос со множественным выбором
 func (s *Question) AddAnswer(userID int64, answer string) error {
 	state, err := s.stateByUser(userID)
 	if err != nil {
