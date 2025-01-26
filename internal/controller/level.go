@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"quiz-mod/internal/message"
+	"quiz-mod/internal/model"
 	"quiz-mod/internal/view"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
 )
 
@@ -61,13 +63,39 @@ func (c *Controller) SendLevelMessage(ctx context.Context, telectx telebot.Conte
 	}
 
 	switch lvl {
-	case 0:
+	case model.FirstLevel:
 		c.questionSrv.SetNext(telectx.Chat().ID)
+
+		if telectx.Message().Caption != "" {
+			err := telectx.Delete()
+			if err != nil {
+				logrus.Errorf("error deleting message: %+v", err)
+			}
+
+			return telectx.Send(message.SecondLvlMessage, view.StartSecondLevel())
+		}
+
 		return telectx.EditOrSend(message.SecondLvlMessage, view.StartSecondLevel())
-	case 1:
+	case model.SecondLevel:
 		c.questionSrv.SetNext(telectx.Chat().ID)
+		if telectx.Message().Caption != "" {
+			err := telectx.Delete()
+			if err != nil {
+				logrus.Errorf("error deleting message: %+v", err)
+			}
+
+			return telectx.Send(message.ThirdLvlMessage, view.StartThirdLevel())
+		}
+
 		return telectx.EditOrSend(message.ThirdLvlMessage, view.StartThirdLevel())
-	case 2:
+	case model.ThirdLevel:
+		if telectx.Message().Caption != "" {
+			err := telectx.Delete()
+			if err != nil {
+				logrus.Errorf("error deleting message: %+v", err)
+			}
+		}
+
 		return c.results(ctx, telectx)
 	default:
 		return fmt.Errorf("unknown lvl: %+v", lvl)

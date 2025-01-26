@@ -9,6 +9,7 @@ import (
 	"quiz-mod/internal/storage/postgres/quiz"
 	"quiz-mod/internal/view"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
 )
 
@@ -77,6 +78,15 @@ func (c *Controller) levelResuls(telectx telebot.Context) error {
 	}
 
 	msg := fmt.Sprintf(message.LevelEnd, rigthAns, questionsNum)
+
+	if telectx.Message().Caption != "" {
+		err := telectx.Delete()
+		if err != nil {
+			logrus.Errorf("error deleting message: %+v", err)
+		}
+
+		return telectx.Send(msg, view.NewLvl())
+	}
 
 	return telectx.EditOrSend(msg, view.NewLvl())
 }

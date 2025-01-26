@@ -22,13 +22,18 @@ func (c *Controller) sendCurrentQuestion(ctx context.Context, telectx telebot.Co
 	}
 
 	if question.Picture != "" {
-		return c.sendPicture(ctx, telectx, question, lvl)
+		kb, err := keyboardFromQuestion(question, lvl)
+		if err != nil {
+			return err
+		}
+
+		return c.sendPicture(ctx, telectx, question, kb)
 	}
 
 	return c.sendTextWithBtns(telectx, question, lvl)
 }
 
-func (c *Controller) sendPicture(ctx context.Context, telectx telebot.Context, question *model.Question, lvl int) error {
+func (c *Controller) sendPicture(ctx context.Context, telectx telebot.Context, question *model.Question, kb *telebot.ReplyMarkup) error {
 	err := c.questionSrv.GetFile(ctx, question.Picture)
 	if err != nil {
 		return err
@@ -39,14 +44,26 @@ func (c *Controller) sendPicture(ctx context.Context, telectx telebot.Context, q
 		return err
 	}
 
-	photo := &telebot.Photo{File: telebot.FromReader(file)}
-
-	_, err = photo.Send(c.bot, telectx.Chat(), nil)
+	msg, err := c.questionSrv.Message(telectx.Chat().ID)
 	if err != nil {
 		return err
 	}
 
-	return c.sendTextWithBtns(telectx, question, lvl)
+	return telectx.EditOrSend(&telebot.Photo{File: telebot.FromReader(file), Caption: msg}, &telebot.SendOptions{
+		ReplyMarkup: kb,
+		ParseMode:   htmlParseMode,
+	})
+}
+
+func keyboardFromQuestion(question *model.Question, lvl int) (*telebot.ReplyMarkup, error) {
+	switch lvl {
+	case model.FirstLevel, model.ThirdLevel:
+		return view.SimpleAnswers(question.Answers), nil
+	case model.SecondLevel:
+		return view.Answers(question.Answers), nil
+	default:
+		return nil, fmt.Errorf("invalid level: %+v", lvl)
+	}
 }
 
 func (c *Controller) sendTextWithBtns(telectx telebot.Context, question *model.Question, lvl int) error {
@@ -55,16 +72,10 @@ func (c *Controller) sendTextWithBtns(telectx telebot.Context, question *model.Q
 		return err
 	}
 
-	var btns *telebot.ReplyMarkup
-
-	switch lvl {
-	case 0, 2:
-		btns = view.SimpleAnswers(question.Answers)
-	case 1:
-		btns = view.Answers(question.Answers)
-	default:
-		return fmt.Errorf("invalid level: %+v", lvl)
+	kb, err := keyboardFromQuestion(question, lvl)
+	if err != nil {
+		return err
 	}
 
-	return telectx.EditOrSend(msg, btns)
+	return telectx.EditOrSend(msg, kb)
 }
