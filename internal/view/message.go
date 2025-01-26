@@ -20,7 +20,7 @@ type ResultView struct {
 	currentPage int
 }
 
-func NewResult() *ResultView {
+func New() *ResultView {
 	return &ResultView{pages: make([]string, 0), currentPage: 0}
 }
 
@@ -60,7 +60,6 @@ func (S *ResultView) fillMsg(idx int, result model.Result) string {
 		result.RigthAnswers[model.SecondLevel], result.TotalAnswers[model.SecondLevel],
 		result.RigthAnswers[model.ThirdLevel], result.TotalAnswers[model.ThirdLevel],
 		seconds,
-		// fmt.Sprintf("\n\n📅Дата: %s", result.Date.Format(dateFieldFormat)),
 	)
 
 	return msg

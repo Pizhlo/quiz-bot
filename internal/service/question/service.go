@@ -27,6 +27,7 @@ type minio interface {
 	Get(ctx context.Context, filePath string) error
 }
 
+//go:generate mockgen -source ./service.go -destination=../../../mocks/question_srv.go -package=mocks
 type storage interface {
 	// SaveResults сохраняет результат викторины в БД
 	SaveResults(ctx context.Context, res model.Result) error
