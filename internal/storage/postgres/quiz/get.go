@@ -3,7 +3,7 @@ package quiz
 import (
 	"context"
 	"errors"
-	"quiz-mod/internal/model"
+	"quiz-bot/internal/model"
 )
 
 var (

@@ -2,7 +2,7 @@ package quiz
 
 import (
 	"context"
-	"quiz-mod/internal/model"
+	"quiz-bot/internal/model"
 )
 
 func (db *quizRepo) SaveResults(ctx context.Context, res model.Result) error {

@@ -3,8 +3,8 @@ package controller
 import (
 	"context"
 	"fmt"
-	"quiz-mod/internal/model"
-	"quiz-mod/internal/view"
+	"quiz-bot/internal/model"
+	"quiz-bot/internal/view"
 	"strings"
 
 	"gopkg.in/telebot.v3"

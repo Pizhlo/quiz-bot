@@ -1,7 +1,7 @@
 package question
 
 import (
-	"quiz-mod/internal/model"
+	"quiz-bot/internal/model"
 	"time"
 
 	"github.com/sirupsen/logrus"

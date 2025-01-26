@@ -2,10 +2,10 @@ package controller
 
 import (
 	"fmt"
-	"quiz-mod/internal/config"
-	"quiz-mod/internal/message"
-	"quiz-mod/internal/service/question"
-	"quiz-mod/internal/view"
+	"quiz-bot/internal/config"
+	"quiz-bot/internal/message"
+	"quiz-bot/internal/service/question"
+	"quiz-bot/internal/view"
 	"sync"
 
 	"github.com/sirupsen/logrus"

@@ -2,9 +2,9 @@ package server
 
 import (
 	"context"
-	"quiz-mod/internal/command"
-	"quiz-mod/internal/message"
-	"quiz-mod/internal/view"
+	"quiz-bot/internal/command"
+	"quiz-bot/internal/message"
+	"quiz-bot/internal/view"
 
 	"gopkg.in/telebot.v3"
 )

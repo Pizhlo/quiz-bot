@@ -3,7 +3,7 @@ package config
 import (
 	"encoding/json"
 	"os"
-	"quiz-mod/internal/model"
+	"quiz-bot/internal/model"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"

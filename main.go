@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"quiz-mod/cmd/bot"
+	"quiz-bot/cmd/bot"
 )
 
 func main() {

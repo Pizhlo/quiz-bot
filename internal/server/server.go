@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"quiz-mod/internal/controller"
+	"quiz-bot/internal/controller"
 
 	"github.com/sirupsen/logrus"
 	tele "gopkg.in/telebot.v3"

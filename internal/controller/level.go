@@ -3,9 +3,9 @@ package controller
 import (
 	"context"
 	"fmt"
-	"quiz-mod/internal/message"
-	"quiz-mod/internal/model"
-	"quiz-mod/internal/view"
+	"quiz-bot/internal/message"
+	"quiz-bot/internal/model"
+	"quiz-bot/internal/view"
 
 	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"

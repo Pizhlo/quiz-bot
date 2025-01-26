@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"quiz-mod/internal/message"
+	"quiz-bot/internal/message"
 	"reflect"
 	"strings"
 

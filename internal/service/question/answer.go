@@ -3,7 +3,7 @@ package question
 import (
 	"context"
 	"fmt"
-	"quiz-mod/internal/model"
+	"quiz-bot/internal/model"
 	"time"
 
 	"github.com/sirupsen/logrus"

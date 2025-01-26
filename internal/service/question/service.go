@@ -3,9 +3,9 @@ package question
 import (
 	"context"
 	"fmt"
-	"quiz-mod/internal/config"
-	"quiz-mod/internal/model"
-	"quiz-mod/internal/view"
+	"quiz-bot/internal/config"
+	"quiz-bot/internal/model"
+	"quiz-bot/internal/view"
 )
 
 // сервис, управляющий вопросами

@@ -2,8 +2,8 @@ package view
 
 import (
 	"fmt"
-	"quiz-mod/internal/message"
-	"quiz-mod/internal/model"
+	"quiz-bot/internal/message"
+	"quiz-bot/internal/model"
 
 	"github.com/sirupsen/logrus"
 	tele "gopkg.in/telebot.v3"

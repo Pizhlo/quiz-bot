@@ -2,7 +2,7 @@ package question
 
 import (
 	"fmt"
-	"quiz-mod/internal/model"
+	"quiz-bot/internal/model"
 	"time"
 )
 
