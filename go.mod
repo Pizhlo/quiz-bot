@@ -25,6 +25,7 @@ require (
 )
 
 require (
+	bou.ke/monkey v1.0.2
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/hcl v1.0.0 // indirect
