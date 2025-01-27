@@ -4,7 +4,9 @@ import (
 	"quiz-bot/internal/model"
 	"quiz-bot/pkg/random"
 	"testing"
+	"time"
 
+	"bou.ke/monkey"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -321,7 +323,7 @@ func TestRigthAnswer(t *testing.T) {
 	}
 }
 
-func TestUserAnswersr(t *testing.T) {
+func TestUserAnswers(t *testing.T) {
 	hardQuestions := random.HardQuestions(3)
 
 	srv := &Question{
@@ -329,31 +331,57 @@ func TestUserAnswersr(t *testing.T) {
 		users:       make(map[int64]userState),
 	}
 
-	type test struct {
-		name   string
-		state  userState
-		result []string
+	state := userState{
+		level:    model.SecondLevel,
+		question: 1,
 	}
 
-	tests := []test{
-		{
-			name: "second lvl",
-			state: userState{
-				level:    model.SecondLevel,
-				question: 1,
+	result := hardQuestions[1].UserAnswers[1]
+
+	srv.users[1] = state
+
+	actual, err := srv.UserAnswers(1)
+	require.NoError(t, err)
+
+	assert.Equal(t, result, actual)
+}
+
+func TestStopTimer(t *testing.T) {
+	wayback := time.Date(2025, 01, 27, 10, 20, 3, 4, time.UTC)
+
+	patch := monkey.Patch(time.Now, func() time.Time { return wayback })
+	defer patch.Unpatch()
+
+	srv := &Question{
+		users: map[int64]userState{
+			1: {
+				level:        model.ThirdLevel,
+				question:     5,
+				maxQuestions: 5,
+				rigthAnswers: 3,
+				startTime:    time.Date(2025, 01, 27, 10, 15, 3, 4, time.UTC),
 			},
-			result: hardQuestions[1].UserAnswers[1],
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			srv.users[1] = tt.state
-
-			actual, err := srv.UserAnswers(1)
-			require.NoError(t, err)
-
-			assert.Equal(t, tt.result, actual)
-		})
+	result := userState{
+		level:        model.ThirdLevel,
+		question:     5,
+		maxQuestions: 5,
+		rigthAnswers: 3,
+		startTime:    time.Date(2025, 01, 27, 10, 15, 3, 4, time.UTC),
+		result: model.Result{
+			Seconds:  300,
+			Duration: 300000000000,
+			Date:     time.Now(),
+		},
 	}
+
+	err := srv.StopTimer(1)
+	require.NoError(t, err)
+
+	state, err := srv.stateByUser(1)
+	require.NoError(t, err)
+
+	assert.Equal(t, result, state)
 }
