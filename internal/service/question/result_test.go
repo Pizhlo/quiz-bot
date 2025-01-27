@@ -1,9 +1,13 @@
 package question
 
 import (
+	"context"
 	"quiz-bot/internal/model"
+	"quiz-bot/mocks"
 	"testing"
+	"time"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -96,4 +100,74 @@ func TestSaveLvlResults(t *testing.T) {
 			assert.Equal(t, tt.result, actual)
 		})
 	}
+}
+
+func TestResults(t *testing.T) {
+	state := userState{
+		result: model.Result{
+			Duration: 300,
+			Seconds:  300,
+			TgID:     1,
+			RigthAnswers: map[int]int{
+				1: 3,
+				2: 4,
+				3: 5,
+			},
+			TotalAnswers: map[int]int{
+				1: 5,
+				2: 5,
+				3: 5,
+			},
+			Date: time.Now(),
+		},
+	}
+
+	srv := Question{
+		users: map[int64]userState{
+			1: state,
+		},
+	}
+
+	result, err := srv.Results(1)
+	require.NoError(t, err)
+
+	assert.Equal(t, state.result, result)
+}
+
+func TestSaveResults(t *testing.T) {
+	state := userState{
+		result: model.Result{
+			Duration: 300,
+			Seconds:  300,
+			TgID:     1,
+			RigthAnswers: map[int]int{
+				model.FirstLevel:  3,
+				model.SecondLevel: 4,
+				model.ThirdLevel:  5,
+			},
+			TotalAnswers: map[int]int{
+				model.FirstLevel:  5,
+				model.SecondLevel: 5,
+				model.ThirdLevel:  5,
+			},
+			Date: time.Now(),
+		},
+	}
+
+	ctrl := gomock.NewController(t)
+	storage := mocks.NewMockstorage(ctrl)
+
+	storage.EXPECT().SaveResults(gomock.Any(), gomock.Any()).Return(nil).Do(func(ctx any, res model.Result) {
+		assert.Equal(t, state.result, res)
+	})
+
+	srv := Question{
+		users: map[int64]userState{
+			1: state,
+		},
+		storage: storage,
+	}
+
+	err := srv.SaveResults(context.TODO(), 1)
+	require.NoError(t, err)
 }
