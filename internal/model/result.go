@@ -16,7 +16,7 @@ type Result struct {
 	Date         time.Time
 }
 
-func (s *Result) InitRigthAnswers(user int64) {
+func (s *Result) InitRigthAnswers() {
 	if s.RigthAnswers == nil {
 		logrus.Debugf("Result: making new map of rigth answers")
 		s.RigthAnswers = make(map[int]int)
@@ -27,7 +27,7 @@ func (s *Result) InitRigthAnswers(user int64) {
 	}
 }
 
-func (s *Result) InitTotalAnswers(user int64) {
+func (s *Result) InitTotalAnswers() {
 	if s.TotalAnswers == nil {
 		s.TotalAnswers = make(map[int]int)
 
@@ -38,21 +38,23 @@ func (s *Result) InitTotalAnswers(user int64) {
 }
 
 // SaveAnswers сохраняет количество правильных вопросов за раунд
-func (s *Result) SaveAnswers(userID int64, lvl int, result int) {
+func (s *Result) SaveAnswers(lvl int, result int) {
 	if s.RigthAnswers != nil {
 		s.RigthAnswers[lvl] = result
 	} else {
-		s.InitRigthAnswers(userID)
+		s.InitRigthAnswers()
+		s.RigthAnswers[lvl] = result
 	}
 
 }
 
 // SaveTotalAnswers сохраняет общее количество вопросов за раунд
-func (s *Result) SaveTotalAnswers(userID int64, lvl int, result int) {
+func (s *Result) SaveTotalAnswers(lvl int, result int) {
 	if s.TotalAnswers != nil {
 		s.TotalAnswers[lvl] = result
 	} else {
-		s.InitTotalAnswers(userID)
+		s.InitTotalAnswers()
+		s.TotalAnswers[lvl] = result
 	}
 
 }

@@ -51,13 +51,8 @@ func (c *Controller) Next(ctx context.Context, telectx telebot.Context) error {
 		return c.sendCurrentQuestion(ctx, telectx)
 	}
 
-	lvl, err := c.questionSrv.CurrentLevel(telectx.Chat().ID)
-	if err != nil {
-		return err
-	}
-
 	// сохраняем результаты за уровень
-	err = c.questionSrv.SaveLvlResults(telectx.Chat().ID, lvl)
+	err = c.questionSrv.SaveLvlResults(telectx.Chat().ID)
 	if err != nil {
 		return err
 	}

@@ -27,10 +27,10 @@ func (s *Question) StartFirstLvl(userID int64) {
 		startTime:    time.Now(),
 	}
 
-	state.result.InitRigthAnswers(userID)
-	state.result.InitTotalAnswers(userID)
+	state.result.InitRigthAnswers()
+	state.result.InitTotalAnswers()
 
-	state.result.SaveTotalAnswers(userID, model.FirstLevel, len(s.firstLevel))
+	state.result.SaveTotalAnswers(model.FirstLevel, len(s.firstLevel))
 
 	s.saveState(userID, state)
 }
@@ -44,7 +44,7 @@ func (s *Question) StartSecondLvl(userID int64) error {
 	}
 
 	// сохраняем общее количество вопросов на уровне
-	state.result.SaveTotalAnswers(userID, model.SecondLevel, len(s.secondLevel))
+	state.result.SaveTotalAnswers(model.SecondLevel, len(s.secondLevel))
 
 	state.level = model.SecondLevel
 	state.maxQuestions = len(s.secondLevel)
@@ -64,7 +64,7 @@ func (s *Question) StartThirdLvl(userID int64) error {
 		return err
 	}
 
-	state.result.SaveTotalAnswers(userID, model.ThirdLevel, len(s.thirdLevel))
+	state.result.SaveTotalAnswers(model.ThirdLevel, len(s.thirdLevel))
 
 	state.level = model.ThirdLevel
 	state.maxQuestions = len(s.thirdLevel)

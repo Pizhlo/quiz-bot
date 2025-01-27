@@ -1,12 +1,14 @@
 package question
 
 import (
-	"context"
 	"fmt"
 	"quiz-bot/internal/model"
 	"time"
 )
 
+// SetAnswer сохраняет один ответ на вопрос. Используется для простых вопросов,
+// у которых один правильный ответ. Проверяет на правильность ответ пользователя, и,
+// если он правильный, увеличивает счетчик state.rigthAnswers
 func (s *Question) SetAnswer(userID int64, answer string) error {
 	state, err := s.stateByUser(userID)
 	if err != nil {
@@ -36,18 +38,9 @@ func (s *Question) SetAnswer(userID int64, answer string) error {
 	return nil
 }
 
-// SaveLvlResults сохраняет количество правильных ответов за уровень в результат
-func (s *Question) SaveLvlResults(userID int64, lvl int) error {
-	state, err := s.stateByUser(userID)
-	if err != nil {
-		return err
-	}
-
-	state.result.SaveAnswers(userID, lvl, state.rigthAnswers)
-
-	return nil
-}
-
+// SaveAnswers используется для вопросов со множественным ответом.
+// Сравнивает накопленные ответы пользователя с правильными, и, если они совпали,
+// увеличивает счетчик state.rigthAnswers
 func (s *Question) SaveAnswers(userID int64) error {
 	state, err := s.stateByUser(userID)
 	if err != nil {
@@ -124,17 +117,6 @@ func (s *Question) UserAnswers(userID int64) ([]string, error) {
 	}
 }
 
-func (s *Question) Results(userID int64) (model.Result, error) {
-	state, err := s.stateByUser(userID)
-	if err != nil {
-		return model.Result{}, err
-	}
-
-	res := state.result
-
-	return res, nil
-}
-
 // StopTimer записывает, сколько длилась викторина
 func (s *Question) StopTimer(userID int64) error {
 	state, err := s.stateByUser(userID)
@@ -155,21 +137,4 @@ func (s *Question) StopTimer(userID int64) error {
 	s.saveState(userID, state)
 
 	return nil
-}
-
-// SaveResults сохраняет результаты в БД
-func (s *Question) SaveResults(ctx context.Context, userID int64) error {
-	res, err := s.Results(userID)
-	if err != nil {
-		return err
-	}
-
-	res.TgID = userID
-
-	// проверяем результаты на валидность перед сохранением
-	err = res.Valid()
-	if err != nil {
-		return err
-	}
-	return s.storage.SaveResults(ctx, res)
 }
