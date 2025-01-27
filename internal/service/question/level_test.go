@@ -62,7 +62,7 @@ func TestCurrentLevel(t *testing.T) {
 func TestStartFirstLvl(t *testing.T) {
 	srv := &Question{
 		users:      make(map[int64]userState),
-		firstLevel: random.SimpleQuestions(2),
+		firstLevel: random.SimpleQuestions(2, false),
 	}
 
 	wayback := time.Date(2024, time.May, 19, 1, 2, 3, 4, time.UTC)
@@ -101,7 +101,7 @@ func TestStartFirstLvl(t *testing.T) {
 func TestStartSecondLvl(t *testing.T) {
 	srv := &Question{
 		users:       make(map[int64]userState),
-		secondLevel: random.HardQuestions(2),
+		secondLevel: random.HardQuestions(2, false),
 	}
 
 	wayback := time.Date(2024, time.May, 19, 1, 2, 3, 4, time.UTC)
@@ -160,7 +160,7 @@ func TestStartSecondLvl(t *testing.T) {
 func TestStartThirdLvl(t *testing.T) {
 	srv := &Question{
 		users:      make(map[int64]userState),
-		thirdLevel: random.SimpleQuestions(3),
+		thirdLevel: random.SimpleQuestions(3, false),
 	}
 
 	wayback := time.Date(2024, time.May, 19, 1, 2, 3, 4, time.UTC)

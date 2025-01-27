@@ -13,9 +13,9 @@ import (
 
 func TestMessage(t *testing.T) {
 	srv := Question{
-		firstLevel:  random.SimpleQuestions(3),
-		secondLevel: random.HardQuestions(3),
-		thirdLevel:  random.SimpleQuestions(4),
+		firstLevel:  random.SimpleQuestions(3, false),
+		secondLevel: random.HardQuestions(3, false),
+		thirdLevel:  random.SimpleQuestions(4, false),
 		users:       make(map[int64]userState),
 	}
 
@@ -175,8 +175,8 @@ func TestSetNext(t *testing.T) {
 }
 
 func TestReset(t *testing.T) {
-	simpleQ := random.SimpleQuestions(5)
-	hardQ := random.HardQuestions(5)
+	simpleQ := random.SimpleQuestions(5, false)
+	hardQ := random.HardQuestions(5, false)
 
 	srv := Question{
 		users: map[int64]userState{

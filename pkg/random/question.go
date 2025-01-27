@@ -2,54 +2,59 @@ package random
 
 import "quiz-bot/internal/model"
 
-func SimpleQuestions(n int) []model.SimpleQuestion {
+func SimpleQuestions(n int, withPicture bool) []model.SimpleQuestion {
 	res := []model.SimpleQuestion{}
 
 	for i := 0; i < n; i++ {
-		res = append(res, SimpleQuestion())
+		res = append(res, SimpleQuestion(withPicture))
 	}
 
 	return res
 }
 
-func SimpleQuestion() model.SimpleQuestion {
+func SimpleQuestion(withPicture bool) model.SimpleQuestion {
 	return model.SimpleQuestion{
-		Question:    *Question(),
+		Question:    *Question(withPicture),
 		RigthAnswer: String(10),
 	}
 }
 
-func HardQuestions(n int) []*model.HardQuestion {
+func HardQuestions(n int, withPicture bool) []*model.HardQuestion {
 	res := []*model.HardQuestion{}
 
 	for i := 0; i < n; i++ {
-		res = append(res, HardQuestion())
+		res = append(res, HardQuestion(withPicture))
 	}
 
 	return res
 }
 
-func HardQuestion() *model.HardQuestion {
+func HardQuestion(withPicture bool) *model.HardQuestion {
 	return &model.HardQuestion{
-		Question:     *Question(),
+		Question:     *Question(withPicture),
 		RigthAnswers: Strings(6),
 	}
 }
 
-func Questions(n int) []model.Question {
+func Questions(n int, withPicture bool) []model.Question {
 	res := []model.Question{}
 
 	for i := 0; i < n; i++ {
-		res = append(res, *Question())
+		res = append(res, *Question(withPicture))
 	}
 
 	return res
 }
 
-func Question() *model.Question {
-	return &model.Question{
+func Question(withPicture bool) *model.Question {
+	q := &model.Question{
 		Text:    String(5),
 		Answers: Strings(6),
-		Picture: String(10),
 	}
+
+	if withPicture {
+		q.Picture = String(10)
+	}
+
+	return q
 }

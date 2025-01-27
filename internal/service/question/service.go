@@ -22,6 +22,7 @@ type Question struct {
 	minio   minio
 }
 
+//go:generate mockgen -source ./service.go -destination=../../../mocks/minio.go -package=mocks
 type minio interface {
 	// Get получает файл из minio и сохраняет по пути filepath/objectName
 	Get(ctx context.Context, filePath string) error

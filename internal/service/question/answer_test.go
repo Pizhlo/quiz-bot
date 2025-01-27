@@ -19,8 +19,8 @@ func TestSetAnswer(t *testing.T) {
 		result userState
 	}
 
-	simpleQuestions := random.SimpleQuestions(10)
-	hardQuestions := random.HardQuestions(10)
+	simpleQuestions := random.SimpleQuestions(10, false)
+	hardQuestions := random.HardQuestions(10, false)
 
 	tests := []test{
 		{
@@ -119,7 +119,7 @@ func TestSaveAnswers(t *testing.T) {
 		result userState
 	}
 
-	hardQuestions := random.HardQuestions(10)
+	hardQuestions := random.HardQuestions(10, false)
 	// проверяем на этом вопросе
 	hardQuestions[5].UserAnswers = make(map[int64][]string)
 
@@ -191,7 +191,7 @@ func TestAddAnswer(t *testing.T) {
 		result      *model.HardQuestion
 	}
 
-	hardQuestions := random.HardQuestions(10)
+	hardQuestions := random.HardQuestions(10, false)
 	hardQuestions[3].UserAnswers = make(map[int64][]string)
 
 	// то, что хотим сохранить
@@ -268,8 +268,8 @@ func TestAddAnswer(t *testing.T) {
 }
 
 func TestRigthAnswer(t *testing.T) {
-	hardQuestions := random.HardQuestions(3)
-	simpleQuestions := random.SimpleQuestions(3)
+	hardQuestions := random.HardQuestions(3, false)
+	simpleQuestions := random.SimpleQuestions(3, false)
 
 	srv := &Question{
 		firstLevel:  simpleQuestions,
@@ -324,7 +324,7 @@ func TestRigthAnswer(t *testing.T) {
 }
 
 func TestUserAnswers(t *testing.T) {
-	hardQuestions := random.HardQuestions(3)
+	hardQuestions := random.HardQuestions(3, false)
 
 	srv := &Question{
 		secondLevel: hardQuestions,

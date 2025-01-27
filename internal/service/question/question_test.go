@@ -84,8 +84,8 @@ func TestCurrentQuestion(t *testing.T) {
 		result *model.Question
 	}
 
-	simpleQuestions := random.SimpleQuestions(5)
-	hardQuestions := random.HardQuestions(5)
+	simpleQuestions := random.SimpleQuestions(5, false)
+	hardQuestions := random.HardQuestions(5, false)
 
 	tests := []test{
 		{

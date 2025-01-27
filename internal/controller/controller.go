@@ -34,6 +34,12 @@ func New(bot *tele.Bot,
 	}
 }
 
+//lint:ignore U1000 Ignore unused function temporarily for debugging
+//go:generate mockgen -source ./controller.go -destination=../../mocks/controller.go -package=mocks
+type teleCtx interface {
+	tele.Context
+}
+
 // HandleError сообщает об ошибке в канал.
 // Также сообщает пользователю об ошибке - редактирует сообщение
 func (c *Controller) HandleError(ctx tele.Context, err error) {
