@@ -38,8 +38,16 @@ func (c *Controller) results(ctx context.Context, telectx telebot.Context) error
 		return err
 	}
 
+	username := ""
+
+	if telectx.Chat().Username != "" {
+		username = fmt.Sprintf("@%s", telectx.Chat().Username)
+	} else {
+		username = fmt.Sprintf("%s %s", telectx.Chat().FirstName, telectx.Chat().LastName)
+	}
+
 	// отправляем результаты в канал
-	return c.sendResultsToChan(telectx.Chat().Username, res)
+	return c.sendResultsToChan(username, res)
 }
 
 func (c *Controller) sendResultsToUser(telectx telebot.Context, res model.Result) error {
