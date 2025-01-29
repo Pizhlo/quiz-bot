@@ -29,7 +29,7 @@ func (s *Question) stateByUser(userID int64) (userState, error) {
 	return state, nil
 }
 
-func (s *Question) saveState(userID int64, state userState) {
+func (s *Question) SaveState(userID int64, state userState) {
 	s.users[userID] = state
 }
 

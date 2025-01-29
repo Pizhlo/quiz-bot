@@ -85,7 +85,7 @@ func (s *Question) SetNext(userID int64) error {
 		state.question++
 	}
 
-	s.saveState(userID, state)
+	s.SaveState(userID, state)
 
 	return nil
 }

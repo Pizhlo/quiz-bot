@@ -32,7 +32,7 @@ func (s *Question) StartFirstLvl(userID int64) {
 
 	state.result.SaveTotalAnswers(model.FirstLevel, len(s.firstLevel))
 
-	s.saveState(userID, state)
+	s.SaveState(userID, state)
 }
 
 func (s *Question) StartSecondLvl(userID int64) error {
@@ -51,7 +51,7 @@ func (s *Question) StartSecondLvl(userID int64) error {
 	state.question = 0
 	state.rigthAnswers = 0
 
-	s.saveState(userID, state)
+	s.SaveState(userID, state)
 
 	return nil
 }
@@ -71,7 +71,7 @@ func (s *Question) StartThirdLvl(userID int64) error {
 	state.question = 0
 	state.rigthAnswers = 0
 
-	s.saveState(userID, state)
+	s.SaveState(userID, state)
 
 	return nil
 

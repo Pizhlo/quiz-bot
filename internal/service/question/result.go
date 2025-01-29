@@ -25,7 +25,7 @@ func (s *Question) SaveLvlResults(userID int64) error {
 
 	state.result.SaveAnswers(state.level, state.rigthAnswers)
 
-	s.saveState(userID, state)
+	s.SaveState(userID, state)
 
 	return nil
 }

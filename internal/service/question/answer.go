@@ -22,14 +22,14 @@ func (s *Question) SetAnswer(userID int64, answer string) error {
 		if question.Valid(answer) {
 			state.rigthAnswers++
 
-			s.saveState(userID, state)
+			s.SaveState(userID, state)
 		}
 	case model.ThirdLevel:
 		question := s.thirdLevel[state.question]
 
 		if question.Valid(answer) {
 			state.rigthAnswers++
-			s.saveState(userID, state)
+			s.SaveState(userID, state)
 		}
 	default:
 		return fmt.Errorf("invalid level for simple question: %+v", state.level)
@@ -53,7 +53,7 @@ func (s *Question) SaveAnswers(userID int64) error {
 
 		if question.Valid(userID) {
 			state.rigthAnswers++
-			s.saveState(userID, state)
+			s.SaveState(userID, state)
 		}
 	default:
 		return fmt.Errorf("invalid level for hard question: %+v", state.level)
@@ -134,7 +134,7 @@ func (s *Question) StopTimer(userID int64) error {
 
 	state.result = res
 
-	s.saveState(userID, state)
+	s.SaveState(userID, state)
 
 	return nil
 }

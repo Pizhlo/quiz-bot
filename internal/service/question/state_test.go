@@ -22,7 +22,7 @@ func TestSaveState(t *testing.T) {
 		rigthAnswers: 3,
 	}
 
-	srv.saveState(1, state)
+	srv.SaveState(1, state)
 
 	actual, err := srv.stateByUser(1)
 	require.NoError(t, err)
