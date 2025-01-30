@@ -3,9 +3,9 @@ package question
 import (
 	"context"
 	"fmt"
-	"quiz-mod/internal/config"
-	"quiz-mod/internal/model"
-	"quiz-mod/internal/view"
+	"quiz-bot/internal/config"
+	"quiz-bot/internal/model"
+	"quiz-bot/internal/view"
 )
 
 // сервис, управляющий вопросами
@@ -19,8 +19,16 @@ type Question struct {
 	views map[int64]*view.ResultView // мапа с вьюхами
 
 	storage storage
+	minio   minio
 }
 
+//go:generate mockgen -source ./service.go -destination=../../../mocks/minio.go -package=mocks
+type minio interface {
+	// Get получает файл из minio и сохраняет по пути filepath/objectName
+	Get(ctx context.Context, filePath string) error
+}
+
+//go:generate mockgen -source ./service.go -destination=../../../mocks/question_srv.go -package=mocks
 type storage interface {
 	// SaveResults сохраняет результат викторины в БД
 	SaveResults(ctx context.Context, res model.Result) error
@@ -29,7 +37,7 @@ type storage interface {
 	AllResults(ctx context.Context, userID int64) ([]model.Result, error)
 }
 
-func New(cfg *config.Config, storage storage) *Question {
+func New(cfg *config.Config, storage storage, minio minio) *Question {
 	return &Question{
 		firstLevel:  cfg.FirstLevel,
 		secondLevel: cfg.SecondLevel,
@@ -37,6 +45,7 @@ func New(cfg *config.Config, storage storage) *Question {
 		users:       make(map[int64]userState),
 		storage:     storage,
 		views:       make(map[int64]*view.ResultView),
+		minio:       minio,
 	}
 }
 
@@ -76,7 +85,7 @@ func (s *Question) SetNext(userID int64) error {
 		state.question++
 	}
 
-	s.saveState(userID, state)
+	s.SaveState(userID, state)
 
 	return nil
 }
@@ -96,4 +105,9 @@ func (s *Question) Reset(userID int64) {
 	for _, q := range s.thirdLevel {
 		q.Reset(userID)
 	}
+}
+
+// GetPics делает запрос в minio и возвращает путь до сохраненного файла
+func (s *Question) GetFile(ctx context.Context, filePath string) error {
+	return s.minio.Get(ctx, filePath)
 }

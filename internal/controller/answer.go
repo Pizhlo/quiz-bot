@@ -3,6 +3,8 @@ package controller
 import (
 	"fmt"
 	"quiz-mod/internal/view"
+	"quiz-bot/internal/model"
+	"quiz-bot/internal/view"
 	"strings"
 
 	"gopkg.in/telebot.v3"
@@ -119,6 +121,8 @@ func (c *Controller) SendAnswer(telectx telebot.Context) error {
 }
 
 func (c *Controller) OnText(telectx telebot.Context) error {
+
+func (c *Controller) OnText(ctx context.Context, telectx telebot.Context) error {
 	lvl, _ := c.questionSrv.CurrentLevel(telectx.Chat().ID) // не надо проверять ошибку - если бот не знает пользователя, не надо реагировать
 
 	switch lvl {

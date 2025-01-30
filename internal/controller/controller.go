@@ -2,10 +2,10 @@ package controller
 
 import (
 	"fmt"
-	"quiz-mod/internal/config"
-	"quiz-mod/internal/message"
-	"quiz-mod/internal/service/question"
-	"quiz-mod/internal/view"
+	"quiz-bot/internal/config"
+	"quiz-bot/internal/message"
+	"quiz-bot/internal/service/question"
+	"quiz-bot/internal/view"
 	"sync"
 
 	"github.com/sirupsen/logrus"
@@ -32,6 +32,12 @@ func New(bot *tele.Bot,
 		channelID:   channelID,
 		questionSrv: questionSrv,
 	}
+}
+
+//lint:ignore U1000 Ignore unused function temporarily for debugging
+//go:generate mockgen -source ./controller.go -destination=../../mocks/controller.go -package=mocks
+type teleCtx interface {
+	tele.Context
 }
 
 // HandleError сообщает об ошибке в канал.

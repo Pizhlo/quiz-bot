@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"quiz-mod/internal/message"
-	"quiz-mod/internal/model"
-	"quiz-mod/internal/storage/postgres/quiz"
-	"quiz-mod/internal/view"
+	"quiz-bot/internal/message"
+	"quiz-bot/internal/model"
+	"quiz-bot/internal/storage/postgres/quiz"
+	"quiz-bot/internal/view"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
 )
 
@@ -37,8 +38,16 @@ func (c *Controller) results(ctx context.Context, telectx telebot.Context) error
 		return err
 	}
 
+	username := ""
+
+	if telectx.Chat().Username != "" {
+		username = fmt.Sprintf("@%s", telectx.Chat().Username)
+	} else {
+		username = fmt.Sprintf("%s %s", telectx.Chat().FirstName, telectx.Chat().LastName)
+	}
+
 	// отправляем результаты в канал
-	return c.sendResultsToChan(telectx.Chat().Username, res)
+	return c.sendResultsToChan(username, res)
 }
 
 func (c *Controller) sendResultsToUser(telectx telebot.Context, res model.Result) error {
@@ -78,12 +87,30 @@ func (c *Controller) levelResuls(telectx telebot.Context) error {
 
 	msg := fmt.Sprintf(message.LevelEnd, rigthAns, questionsNum)
 
+	if telectx.Message().Caption != "" {
+		err := telectx.Delete()
+		if err != nil {
+			logrus.Errorf("error deleting message: %+v", err)
+		}
+
+		return telectx.Send(msg, view.NewLvl())
+	}
+
 	return telectx.EditOrSend(msg, view.NewLvl())
 }
 
 // Reset сбрасывает все сохраненные данные. Используется, если пользователь ушел в главное меню
 func (c *Controller) Reset(telectx telebot.Context) error {
 	c.questionSrv.Reset(telectx.Chat().ID)
+
+	if telectx.Message().Caption != "" {
+		err := telectx.Delete()
+		if err != nil {
+			logrus.Errorf("error deleting message: %+v", err)
+		}
+
+		return telectx.Send(message.StartMessage, view.MainMenu())
+	}
 
 	return telectx.EditOrSend(message.StartMessage, view.MainMenu())
 }

@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"quiz-mod/internal/controller"
+	"quiz-bot/internal/controller"
 
 	"github.com/sirupsen/logrus"
 	tele "gopkg.in/telebot.v3"
@@ -21,7 +21,7 @@ func New(bot *tele.Bot, controller *controller.Controller) *Server {
 }
 
 func (s *Server) Start(ctx context.Context) {
-	s.commandHandlers()
+	s.commandHandlers(ctx)
 	s.buttonHandlers(ctx)
 
 	logrus.Info("server started")

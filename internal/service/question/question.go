@@ -3,8 +3,8 @@ package question
 import (
 	"context"
 	"fmt"
-	"quiz-mod/internal/model"
-	"quiz-mod/internal/view"
+	"quiz-bot/internal/model"
+	"quiz-bot/internal/view"
 
 	"gopkg.in/telebot.v3"
 )
@@ -51,7 +51,7 @@ func (s *Question) AllResults(ctx context.Context, userID int64) (string, *teleb
 		return "", nil, err
 	}
 
-	view := view.NewResult()
+	view := view.New()
 
 	s.views[userID] = view
 

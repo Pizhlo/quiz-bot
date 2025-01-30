@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"quiz-mod/internal/message"
+	"quiz-bot/internal/message"
 	"reflect"
 	"strings"
 
@@ -16,8 +16,9 @@ const (
 )
 
 type Question struct {
-	Text    string   `json:"question"`
-	Answers []string `json:"answers"`
+	Text    string   `json:"question"` // текст вопроса
+	Answers []string `json:"answers"`  // варианты ответа
+	Picture string   `json:"picture"`  // картинка (опционально)
 }
 
 func (q *Question) QuestionText(currIdx, maxIdx int) string {
@@ -54,8 +55,8 @@ func (s *SimpleQuestion) Valid(answer string) bool {
 // вопрос, у которого несколько правильных ответов
 type HardQuestion struct {
 	Question
-	RigthAnswers []string `json:"rigth_answers"`
-	UserAnswers  map[int64][]string
+	RigthAnswers []string           `json:"rigth_answers"` // правильные ответы
+	UserAnswers  map[int64][]string // ответы пользователя (по userID)
 }
 
 func (s *HardQuestion) AddUserAnswer(user int64, answer string) {
