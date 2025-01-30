@@ -117,7 +117,8 @@ func (s *Question) UserAnswers(userID int64) ([]string, error) {
 	}
 }
 
-func (s *Question) Results(userID int64) (model.Result, error) {
+// StopTimer записывает, сколько длилась викторина
+func (s *Question) StopTimer(userID int64) error {
 	state, err := s.stateByUser(userID)
 	if err != nil {
 		return err

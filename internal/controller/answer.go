@@ -1,8 +1,8 @@
 package controller
 
 import (
+	"context"
 	"fmt"
-	"quiz-mod/internal/view"
 	"quiz-bot/internal/model"
 	"quiz-bot/internal/view"
 	"strings"
@@ -29,6 +29,15 @@ func (c *Controller) SimpleAnswer(telectx telebot.Context) error {
 	}
 
 	msg := fmt.Sprintf("%s\n\nТвой ответ: %s\nПравильный ответ: %+v", text, telectx.Data(), rigthAnswer[0])
+
+	// если прошлый вопрос был с фото, тогда вместо текста будет "подпись"
+	if telectx.Message().Caption != "" {
+		// не удаляем фотографию, а меняем подпись, пока пользователь остается на странице вопроса
+		return telectx.EditCaption(msg, &telebot.SendOptions{
+			ReplyMarkup: view.Next(),
+			ParseMode:   htmlParseMode,
+		})
+	}
 
 	return telectx.EditOrSend(msg, view.Next())
 }
@@ -72,6 +81,15 @@ func (c *Controller) MultipleAnswer(telectx telebot.Context) error {
 	}
 
 	menu := view.Answers(answers)
+
+	// если прошлый вопрос был с фото, тогда вместо текста будет "подпись"
+	if telectx.Message().Caption != "" {
+		// не удаляем фотографию, а меняем подпись, пока пользователь остается на странице вопроса
+		return telectx.EditCaption(msg, &telebot.SendOptions{
+			ReplyMarkup: menu,
+			ParseMode:   htmlParseMode,
+		})
+	}
 
 	return telectx.EditOrSend(msg, menu)
 }
@@ -117,16 +135,22 @@ func (c *Controller) SendAnswer(telectx telebot.Context) error {
 
 	msg := fmt.Sprintf("%s\n\nТвой ответ: %s\nПравильный ответ: %+v", text, userAnsString, answers)
 
+	// если прошлый вопрос был с фото, тогда вместо текста будет "подпись"
+	if telectx.Message().Caption != "" {
+		return telectx.EditCaption(msg, &telebot.SendOptions{
+			ReplyMarkup: view.Next(),
+			ParseMode:   htmlParseMode,
+		})
+	}
+
 	return telectx.EditOrSend(msg, view.Next())
 }
-
-func (c *Controller) OnText(telectx telebot.Context) error {
 
 func (c *Controller) OnText(ctx context.Context, telectx telebot.Context) error {
 	lvl, _ := c.questionSrv.CurrentLevel(telectx.Chat().ID) // не надо проверять ошибку - если бот не знает пользователя, не надо реагировать
 
 	switch lvl {
-	case 2:
+	case model.ThirdLevel:
 		rigthAnswers, err := c.questionSrv.RigthAnswer(telectx.Chat().ID)
 		if err != nil {
 			return err
@@ -137,12 +161,29 @@ func (c *Controller) OnText(ctx context.Context, telectx telebot.Context) error 
 			return err
 		}
 
+		question, err := c.questionSrv.CurrentQuestion(telectx.Chat().ID)
+		if err != nil {
+			return err
+		}
+
+		if question.Picture != "" {
+			return c.sendPicture(ctx, telectx, question, view.Next())
+		}
+
 		text, err := c.questionSrv.Message(telectx.Chat().ID)
 		if err != nil {
 			return err
 		}
 
 		msg := fmt.Sprintf("%s\n\nТвой ответ: %s\nПравильный ответ: %+v", text, telectx.Text(), rigthAnswers[0])
+
+		// если прошлый вопрос был с фото, тогда вместо текста будет "подпись"
+		if telectx.Message().Caption != "" {
+			return telectx.EditCaption(msg, &telebot.SendOptions{
+				ReplyMarkup: view.Next(),
+				ParseMode:   htmlParseMode,
+			})
+		}
 
 		return telectx.EditOrSend(msg, view.Next())
 	default:
