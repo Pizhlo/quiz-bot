@@ -30,9 +30,10 @@ func HardQuestions(n int, withPicture bool) []*model.HardQuestion {
 }
 
 func HardQuestion(withPicture bool) *model.HardQuestion {
+	q := Question(withPicture)
 	return &model.HardQuestion{
-		Question:     *Question(withPicture),
-		RigthAnswers: Strings(6),
+		Question:     *q,
+		RigthAnswers: q.Answers[:2],
 	}
 }
 
