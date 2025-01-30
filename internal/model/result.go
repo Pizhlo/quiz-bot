@@ -20,21 +20,21 @@ func (s *Result) InitRigthAnswers() {
 	if s.RigthAnswers == nil {
 		logrus.Debugf("Result: making new map of rigth answers")
 		s.RigthAnswers = make(map[int]int)
-
-		s.RigthAnswers[FirstLevel] = 0
-		s.RigthAnswers[SecondLevel] = 0
-		s.RigthAnswers[ThirdLevel] = 0
 	}
+
+	s.RigthAnswers[FirstLevel] = 0
+	s.RigthAnswers[SecondLevel] = 0
+	s.RigthAnswers[ThirdLevel] = 0
 }
 
 func (s *Result) InitTotalAnswers() {
 	if s.TotalAnswers == nil {
 		s.TotalAnswers = make(map[int]int)
-
-		s.TotalAnswers[FirstLevel] = 0
-		s.TotalAnswers[SecondLevel] = 0
-		s.TotalAnswers[ThirdLevel] = 0
 	}
+
+	s.TotalAnswers[FirstLevel] = 0
+	s.TotalAnswers[SecondLevel] = 0
+	s.TotalAnswers[ThirdLevel] = 0
 }
 
 // SaveAnswers сохраняет количество правильных вопросов за раунд
@@ -45,7 +45,6 @@ func (s *Result) SaveAnswers(lvl int, result int) {
 		s.InitRigthAnswers()
 		s.RigthAnswers[lvl] = result
 	}
-
 }
 
 // SaveTotalAnswers сохраняет общее количество вопросов за раунд
