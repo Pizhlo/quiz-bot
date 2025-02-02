@@ -24,7 +24,7 @@ func TestReset(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 
 	// сохраняем пользователя
 	qSrv.StartFirstLvl(1)
@@ -61,7 +61,7 @@ func TestReset_WithPicture(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 
 	// сохраняем пользователя
 	qSrv.StartFirstLvl(1)
@@ -104,7 +104,7 @@ func TestResultsByUserID_NoResults(t *testing.T) {
 	telectx := mocks.NewMockteleCtx(ctrl)
 	db := mocks.NewMockstorage(ctrl)
 
-	qSrv := question.New(&cfg, db, nil)
+	qSrv := question.New(&cfg, db, nil, "")
 
 	// сохраняем пользователя
 	qSrv.StartFirstLvl(1)
@@ -146,7 +146,7 @@ func TestResultsByUserID(t *testing.T) {
 	telectx := mocks.NewMockteleCtx(ctrl)
 	db := mocks.NewMockstorage(ctrl)
 
-	qSrv := question.New(&cfg, db, nil)
+	qSrv := question.New(&cfg, db, nil, "")
 
 	// сохраняем пользователя
 	qSrv.StartFirstLvl(1)

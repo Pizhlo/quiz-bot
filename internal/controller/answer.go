@@ -166,16 +166,17 @@ func (c *Controller) OnText(ctx context.Context, telectx telebot.Context) error 
 			return err
 		}
 
-		if question.Picture != "" {
-			return c.sendPicture(ctx, telectx, question, view.Next())
-		}
-
 		text, err := c.questionSrv.Message(telectx.Chat().ID)
 		if err != nil {
 			return err
 		}
 
 		msg := fmt.Sprintf("%s\n\nТвой ответ: %s\nПравильный ответ: %+v", text, telectx.Text(), rigthAnswers[0])
+
+		// если вопрос с фото, отправляем фото еще раз
+		if question.Picture != "" {
+			return c.sendPicture(ctx, telectx, msg, question.Picture, view.Next())
+		}
 
 		// если прошлый вопрос был с фото, тогда вместо текста будет "подпись"
 		if telectx.Message().Caption != "" {

@@ -51,6 +51,7 @@ func New(cfg *config.Config, storage storage, minio minio, successPicFile string
 	}
 }
 
+// Message формирует текст сообщения из текста вопроса
 func (s *Question) Message(userID int64) (string, error) {
 	state, err := s.stateByUser(userID)
 	if err != nil {

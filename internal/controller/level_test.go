@@ -23,7 +23,7 @@ func TestStartFirstLevel(t *testing.T) {
 		SecondLevel: random.HardQuestions(5, false),
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 
 	controller := New(nil, 0, &cfg, qSrv)
 
@@ -57,7 +57,7 @@ func TestStartSecondLevel(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 
 	// сохраняем пользователя
 	qSrv.StartFirstLvl(1)
@@ -94,7 +94,7 @@ func TestStartThirdLevel(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 
 	// сохраняем пользователя
 	qSrv.StartFirstLvl(1)
@@ -131,7 +131,7 @@ func TestNext_QuestionNotLast(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 
 	// сохраняем пользователя
 	qSrv.StartFirstLvl(1)
@@ -168,7 +168,7 @@ func TestNext_QuestionLast(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 
 	// сохраняем пользователя
 	qSrv.StartFirstLvl(1)
@@ -208,7 +208,7 @@ func TestSendLevelMessage_FirstLvl(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 
 	controller := New(nil, 0, &cfg, qSrv)
@@ -243,7 +243,7 @@ func TestSendLevelMessage_FirstLvl_WithPicture(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 
 	controller := New(nil, 0, &cfg, qSrv)
@@ -280,7 +280,7 @@ func TestSendLevelMessage_SecondLvl(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 
@@ -316,7 +316,7 @@ func TestSendLevelMessage_SecondLvl_WithPicture(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 
@@ -364,7 +364,7 @@ func TestSendLevelMessage_ThirdLvl(t *testing.T) {
 	telectx := mocks.NewMockteleCtx(ctrl)
 	db := mocks.NewMockstorage(ctrl)
 
-	qSrv := question.New(&cfg, db, nil)
+	qSrv := question.New(&cfg, db, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 	qSrv.StartThirdLvl(1)
@@ -417,7 +417,7 @@ func TestSendLevelMessage_ThirdLvl_WithPicture(t *testing.T) {
 	telectx := mocks.NewMockteleCtx(ctrl)
 	db := mocks.NewMockstorage(ctrl)
 
-	qSrv := question.New(&cfg, db, nil)
+	qSrv := question.New(&cfg, db, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 	qSrv.StartThirdLvl(1)

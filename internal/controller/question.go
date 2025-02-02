@@ -27,24 +27,19 @@ func (c *Controller) sendCurrentQuestion(ctx context.Context, telectx telebot.Co
 			return err
 		}
 
-		return c.sendPicture(ctx, telectx, question, kb)
+		msg, err := c.questionSrv.Message(telectx.Chat().ID)
+		if err != nil {
+			return err
+		}
+
+		return c.sendPicture(ctx, telectx, msg, question.Picture, kb)
 	}
 
 	return c.sendTextWithBtns(telectx, question, lvl)
 }
 
-func (c *Controller) sendPicture(ctx context.Context, telectx telebot.Context, question *model.Question, kb *telebot.ReplyMarkup) error {
-	err := c.questionSrv.GetFile(ctx, question.Picture)
-	if err != nil {
-		return err
-	}
-
-	file, err := os.Open(question.Picture)
-	if err != nil {
-		return err
-	}
-
-	msg, err := c.questionSrv.Message(telectx.Chat().ID)
+func (c *Controller) sendPicture(ctx context.Context, telectx telebot.Context, msg string, filename string, kb *telebot.ReplyMarkup) error {
+	file, err := c.getPicture(ctx, filename)
 	if err != nil {
 		return err
 	}
@@ -53,6 +48,15 @@ func (c *Controller) sendPicture(ctx context.Context, telectx telebot.Context, q
 		ReplyMarkup: kb,
 		ParseMode:   htmlParseMode,
 	})
+}
+
+func (c *Controller) getPicture(ctx context.Context, filename string) (*os.File, error) {
+	err := c.questionSrv.GetFile(ctx, filename)
+	if err != nil {
+		return nil, err
+	}
+
+	return os.Open(filename)
 }
 
 func keyboardFromQuestion(question *model.Question, lvl int) (*telebot.ReplyMarkup, error) {
