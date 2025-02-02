@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"quiz-bot/internal/message"
 	"quiz-bot/internal/model"
 	"quiz-bot/internal/storage/postgres/quiz"
@@ -33,7 +34,7 @@ func (c *Controller) results(ctx context.Context, telectx telebot.Context) error
 	}
 
 	// отправляем результаты пользователю
-	err = c.sendResultsToUser(telectx, res)
+	err = c.sendResultsToUser(ctx, telectx, res)
 	if err != nil {
 		return err
 	}
@@ -50,12 +51,25 @@ func (c *Controller) results(ctx context.Context, telectx telebot.Context) error
 	return c.sendResultsToChan(username, res)
 }
 
-func (c *Controller) sendResultsToUser(telectx telebot.Context, res model.Result) error {
+func (c *Controller) sendResultsToUser(ctx context.Context, telectx telebot.Context, res model.Result) error {
 	result := c.resultMsg(res)
+
+	filename, err := c.questionSrv.GetFileEndRound(ctx)
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
 
 	msg := fmt.Sprintf(message.ResultMessage, result)
 
-	return telectx.EditOrSend(msg, view.ResultMenu())
+	return telectx.EditOrSend(&telebot.Photo{File: telebot.FromReader(file), Caption: msg}, &telebot.SendOptions{
+		ReplyMarkup: view.ResultMenu(),
+		ParseMode:   htmlParseMode,
+	})
 }
 
 func (c *Controller) resultMsg(res model.Result) string {

@@ -10,9 +10,10 @@ import (
 
 // сервис, управляющий вопросами
 type Question struct {
-	firstLevel  []model.SimpleQuestion
-	secondLevel []*model.HardQuestion
-	thirdLevel  []model.SimpleQuestion
+	firstLevel     []model.SimpleQuestion
+	secondLevel    []*model.HardQuestion
+	thirdLevel     []model.SimpleQuestion
+	successPicFile string // название файла с фотографией для конца викторины
 
 	users map[int64]userState // для хранения состояний пользователей
 
@@ -37,15 +38,16 @@ type storage interface {
 	AllResults(ctx context.Context, userID int64) ([]model.Result, error)
 }
 
-func New(cfg *config.Config, storage storage, minio minio) *Question {
+func New(cfg *config.Config, storage storage, minio minio, successPicFile string) *Question {
 	return &Question{
-		firstLevel:  cfg.FirstLevel,
-		secondLevel: cfg.SecondLevel,
-		thirdLevel:  cfg.ThirdLevel,
-		users:       make(map[int64]userState),
-		storage:     storage,
-		views:       make(map[int64]*view.ResultView),
-		minio:       minio,
+		firstLevel:     cfg.FirstLevel,
+		secondLevel:    cfg.SecondLevel,
+		thirdLevel:     cfg.ThirdLevel,
+		users:          make(map[int64]userState),
+		storage:        storage,
+		views:          make(map[int64]*view.ResultView),
+		minio:          minio,
+		successPicFile: successPicFile,
 	}
 }
 
@@ -110,4 +112,10 @@ func (s *Question) Reset(userID int64) {
 // GetPics делает запрос в minio и возвращает путь до сохраненного файла
 func (s *Question) GetFile(ctx context.Context, filePath string) error {
 	return s.minio.Get(ctx, filePath)
+}
+
+// GetFileEndRound достает с сервера картинку, которую нужно приложить в конце раунда.
+// Возвращает название файла в формате folder/filename.jpg
+func (s *Question) GetFileEndRound(ctx context.Context) (string, error) {
+	return s.successPicFile, s.minio.Get(ctx, s.successPicFile)
 }
