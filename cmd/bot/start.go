@@ -164,7 +164,12 @@ func Start(envFile, confName, path string) {
 		logrus.Fatalf("failed to connect minio: %+v", err)
 	}
 
-	questionSrv := question.New(cfg, storage, minio)
+	endRoundPic := os.Getenv("END_ROUND_PICTURE")
+	if len(endRoundPic) == 0 {
+		logrus.Fatalf("END_ROUND_PICTURE not set")
+	}
+
+	questionSrv := question.New(cfg, storage, minio, endRoundPic)
 
 	controller := controller.New(bot, channelID, cfg, questionSrv)
 

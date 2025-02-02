@@ -22,7 +22,7 @@ func TestSimpleAnswer_WithoutPicture(t *testing.T) {
 		SecondLevel: random.HardQuestions(5, false),
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 
 	controller := New(nil, 0, &cfg, qSrv)
@@ -60,7 +60,7 @@ func TestSimpleAnswer_WithPicture(t *testing.T) {
 		SecondLevel: random.HardQuestions(5, false),
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 
 	controller := New(nil, 0, &cfg, qSrv)
@@ -102,7 +102,7 @@ func TestMultipleAnswer_NoAnswersSelected(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 
@@ -142,7 +142,7 @@ func TestMultipleAnswer_AnswersSelected(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 
@@ -204,7 +204,7 @@ func TestMultipleAnswer_NoAnswersSelected_WithPicture(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 
@@ -248,7 +248,7 @@ func TestMultipleAnswer_AnswersSelected_WithPicture(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 
@@ -315,7 +315,7 @@ func TestSendAnswer(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 
@@ -365,7 +365,7 @@ func TestSendAnswer_WithPicture(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 
@@ -418,7 +418,7 @@ func TestOnText(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 	qSrv.StartThirdLvl(1)
@@ -462,7 +462,7 @@ func TestOnText_WithPicture(t *testing.T) {
 		ThirdLevel:  random.SimpleQuestions(5, false),
 	}
 
-	qSrv := question.New(&cfg, nil, nil)
+	qSrv := question.New(&cfg, nil, nil, "")
 	qSrv.StartFirstLvl(1)
 	qSrv.StartSecondLvl(1)
 	qSrv.StartThirdLvl(1)
