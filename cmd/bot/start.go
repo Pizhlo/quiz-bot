@@ -55,7 +55,7 @@ func Start(envFile, confName, path string) {
 
 	err = godotenv.Load()
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Error(err)
 	}
 
 	token := os.Getenv("TOKEN")
