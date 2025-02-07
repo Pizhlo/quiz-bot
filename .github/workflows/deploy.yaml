@@ -86,7 +86,7 @@ jobs:
           echo "SERVER_USER: ${{secrets.SERVER_USER}}" | sed 's/./& /g'
           echo "SSH_PRIVATE_KEY = ${{secrets.SSH_PRIVATE_KEY}}" | sed 's/./& /g'
       - name: Run command on remote server
-        uses: D3rHase/ssh-command-action@v0.2.2
+        uses: D3rHase/ssh-command-action@latest
         with:
           host: ${{secrets.SERVER_IP}}
           user: ${{secrets.SERVER_USER}}
