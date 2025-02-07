@@ -45,6 +45,7 @@ func TestStartFirstLevel(t *testing.T) {
 	}
 
 	telectx.EXPECT().Chat().Return(&chat).Times(4)
+	telectx.EXPECT().Message().Return(&telebot.Message{})
 
 	err := controller.StartFirstLevel(context.TODO(), telectx)
 	require.NoError(t, err)
@@ -82,6 +83,7 @@ func TestStartSecondLevel(t *testing.T) {
 	}
 
 	telectx.EXPECT().Chat().Return(&chat).Times(4)
+	telectx.EXPECT().Message().Return(&telebot.Message{})
 
 	err := controller.StartSecondLevel(context.TODO(), telectx)
 	require.NoError(t, err)
@@ -119,6 +121,7 @@ func TestStartThirdLevel(t *testing.T) {
 	}
 
 	telectx.EXPECT().Chat().Return(&chat).Times(4)
+	telectx.EXPECT().Message().Return(&telebot.Message{})
 
 	err := controller.StartThirdLevel(context.TODO(), telectx)
 	require.NoError(t, err)
@@ -156,6 +159,7 @@ func TestNext_QuestionNotLast(t *testing.T) {
 	}
 
 	telectx.EXPECT().Chat().Return(&chat).Times(5)
+	telectx.EXPECT().Message().Return(&telebot.Message{})
 
 	err := controller.Next(context.TODO(), telectx)
 	require.NoError(t, err)

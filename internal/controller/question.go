@@ -7,6 +7,7 @@ import (
 	"quiz-bot/internal/model"
 	"quiz-bot/internal/view"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
 )
 
@@ -79,6 +80,15 @@ func (c *Controller) sendTextWithBtns(telectx telebot.Context, question *model.Q
 	kb, err := keyboardFromQuestion(question, lvl)
 	if err != nil {
 		return err
+	}
+
+	if telectx.Message().Caption != "" {
+		err := telectx.Delete()
+		if err != nil {
+			logrus.Errorf("error deleting message: %+v", err)
+		}
+
+		return telectx.Send(msg, kb)
 	}
 
 	return telectx.EditOrSend(msg, kb)
