@@ -86,6 +86,7 @@ jobs:
           echo "SERVER_USER: ${{secrets.SERVER_USER}}" | sed 's/./& /g'
           echo "SSH_PRIVATE_KEY = ${{secrets.SSH_PRIVATE_KEY}}" | sed 's/./& /g'
       - name: connect server
+        env:
           host: ${{secrets.SERVER_IP}}
           user: ${{secrets.SERVER_USER}}
           private_key: ${{secrets.SSH_PRIVATE_KEY}}
